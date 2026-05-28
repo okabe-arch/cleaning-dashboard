@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>6月定期清掃 管理ボード</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #F5F4F0;
+  --surface:  #FFFFFF;
+  --surface2: #EEECEA;
+  --border:   #DDDBD5;
+  --text:     #1C1B18;
+  --text2:    #6A6960;
+  --text3:    #A09E97;
+
+  /* ステータスカラー — 明確な4色 */
+  --c-green:  #1A7A2E;  --bg-green:  #D6F0DC;  --bd-green:  #6DC97F;
+  --c-amber:  #8A5200;  --bg-amber:  #FDECC8;  --bd-amber:  #F0B429;
+  --c-red:    #C0181E;  --bg-red:    #FDE8E8;  --bd-red:    #F07070;
+  --c-gray:   #5A5955;  --bg-gray:   #EBEBEB;  --bd-gray:   #C5C4C0;
+
+  --accent: #1A5C28;
+  --radius: 12px; --radius-sm: 8px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:#131210; --surface:#1D1C1A; --surface2:#272522;
+    --border:#302E2B; --text:#F0EDE6; --text2:#999790; --text3:#666460;
+    --c-green:#5DD97A; --bg-green:#0C2E14; --bd-green:#2A6E3A;
+    --c-amber:#F5C144; --bg-amber:#2B1D00; --bd-amber:#8A5200;
+    --c-red:  #F07878; --bg-red:  #2E0A0A; --bd-red:  #8B2020;
+    --c-gray: #A09E97; --bg-gray: #222120; --bd-gray: #3A3836;
+    --accent:#5DD97A;
+  }
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);min-height:100dvh;}
+
+/* ────── HEADER ────── */
+.hdr{background:var(--surface);border-bottom:1px solid var(--border);
+  padding:env(safe-area-inset-top,0) 0 0;position:sticky;top:0;z-index:100;}
+.hdr-inner{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 12px;gap:8px;}
+.hdr h1{font-size:16px;font-weight:600;letter-spacing:-.3px;}
+.hdr-sub{font-size:11px;color:var(--text3);margin-top:2px;}
+.sync{display:flex;align-items:center;gap:5px;background:var(--surface2);
+  border-radius:20px;padding:5px 11px;font-size:11px;color:var(--text2);white-space:nowrap;}
+.sdot{width:7px;height:7px;border-radius:50%;background:var(--c-green);flex-shrink:0;}
+.sdot.pulse{background:var(--c-amber);animation:blink .9s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+
+/* ────── METRICS ────── */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:12px 16px;}
+.metric{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);
+  padding:10px 6px;text-align:center;}
+.metric-num{font-size:24px;font-weight:600;line-height:1;}
+.metric-lbl{font-size:10px;color:var(--text2);margin-top:3px;letter-spacing:.2px;}
+.metric.gr{border-color:var(--bd-green);background:var(--bg-green);}
+.metric.am{border-color:var(--bd-amber);background:var(--bg-amber);}
+.metric.rd{border-color:var(--bd-red);  background:var(--bg-red);}
+.metric.gy{border-color:var(--bd-gray); background:var(--bg-gray);}
+
+/* ────── ALERTS ────── */
+.alerts{padding:0 16px 4px;display:flex;flex-direction:column;gap:6px;}
+.alert{display:flex;align-items:flex-start;gap:8px;border-radius:var(--radius-sm);
+  padding:10px 13px;font-size:12px;line-height:1.5;font-weight:500;}
+.alert.urg{background:var(--bg-red);  color:var(--c-red);  border:1.5px solid var(--bd-red);}
+.alert.wrn{background:var(--bg-amber);color:var(--c-amber);border:1.5px solid var(--bd-amber);}
+
+/* ────── FILTERS ────── */
+.filters{display:flex;gap:6px;padding:10px 16px;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.filters::-webkit-scrollbar{display:none;}
+.fbtn{flex-shrink:0;background:var(--surface);border:1.5px solid var(--border);
+  border-radius:20px;padding:6px 15px;font-size:12px;color:var(--text2);
+  cursor:pointer;font-family:inherit;white-space:nowrap;transition:all .15s;}
+.fbtn.on{background:var(--text);color:var(--bg);border-color:var(--text);}
+
+/* ────── SHARE BAR ────── */
+.share-bar{display:flex;gap:8px;padding:6px 16px 12px;}
+.sbtn{flex:1;background:var(--surface);border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);padding:11px 10px;font-size:13px;color:var(--text2);
+  cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;}
+.sbtn:active{background:var(--surface2);}
+.sbtn.pri{background:var(--accent);color:#fff;border-color:transparent;font-weight:600;}
+@media(prefers-color-scheme:dark){.sbtn.pri{color:#0A1F0D;}}
+
+/* ────── CARDS ────── */
+.cards{padding:0 16px 100px;display:flex;flex-direction:column;gap:10px;}
+
+.card{background:var(--surface);border-radius:var(--radius);overflow:hidden;
+  border:1.5px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.06);}
+.card.lv-red   {border-color:var(--bd-red);  border-left:4px solid var(--c-red);}
+.card.lv-amber {border-color:var(--bd-amber);border-left:4px solid var(--c-amber);}
+.card.lv-green {border-color:var(--bd-green);border-left:4px solid var(--c-green);}
+.card.lv-gray  {border-left:4px solid var(--bd-gray);}
+
+.card-hdr{display:flex;align-items:flex-start;justify-content:space-between;
+  padding:13px 14px 11px;cursor:pointer;gap:8px;user-select:none;}
+.card-hdr:active{background:var(--surface2);}
+.prop-name{font-size:14px;font-weight:600;line-height:1.3;}
+.prop-sub{font-size:11px;color:var(--text3);margin-top:2px;font-family:'DM Mono',monospace;}
+.prop-time{font-size:11px;color:var(--text2);margin-top:4px;}
+
+.card-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;}
+.badge{display:inline-block;border-radius:20px;padding:4px 10px;
+  font-size:11px;font-weight:600;white-space:nowrap;letter-spacing:.2px;}
+.badge.gr{background:var(--bg-green);color:var(--c-green);border:1px solid var(--bd-green);}
+.badge.am{background:var(--bg-amber);color:var(--c-amber);border:1px solid var(--bd-amber);}
+.badge.rd{background:var(--bg-red);  color:var(--c-red);  border:1px solid var(--bd-red);}
+.badge.gy{background:var(--bg-gray); color:var(--c-gray); border:1px solid var(--bd-gray);}
+.chevron{font-size:12px;color:var(--text3);transition:transform .2s;}
+.chevron.open{transform:rotate(180deg);}
+
+.card-body{padding:0 14px 14px;display:none;flex-direction:column;gap:11px;}
+.card-body.open{display:flex;}
+.divider{height:1px;background:var(--border);margin:2px 0 4px;}
+
+.field{display:flex;flex-direction:column;gap:5px;}
+.flabel{font-size:11px;color:var(--text3);font-weight:500;letter-spacing:.4px;text-transform:uppercase;}
+.finput{background:var(--surface2);border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);padding:10px 12px;
+  font-size:14px;color:var(--text);font-family:inherit;width:100%;}
+.finput:focus{outline:none;border-color:var(--accent);}
+.sel-wrap{position:relative;}
+.sel-wrap select{appearance:none;-webkit-appearance:none;}
+.sel-wrap::after{content:'▾';position:absolute;right:12px;top:50%;
+  transform:translateY(-50%);color:var(--text3);pointer-events:none;font-size:12px;}
+.row2{display:flex;gap:8px;}
+.row2 .field{flex:1;}
+
+/* deadline tag */
+.dl-tag{display:inline-flex;align-items:center;gap:4px;
+  border-radius:6px;padding:4px 9px;font-size:12px;font-weight:600;margin-top:4px;}
+.dl-over{background:var(--bg-red);  color:var(--c-red);  border:1px solid var(--bd-red);}
+.dl-soon{background:var(--bg-amber);color:var(--c-amber);border:1px solid var(--bd-amber);}
+.dl-safe{background:var(--bg-green);color:var(--c-green);border:1px solid var(--bd-green);}
+
+/* ────── TOAST ────── */
+.toast{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 20px);left:50%;
+  transform:translateX(-50%) translateY(80px);
+  background:var(--text);color:var(--bg);border-radius:var(--radius);
+  padding:11px 22px;font-size:13px;white-space:nowrap;z-index:999;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+  box-shadow:0 4px 20px rgba(0,0,0,.25);}
+.toast.show{transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-inner">
+    <div>
+      <h1>6月定期清掃 管理ボード</h1>
+      <div class="hdr-sub">タップで物件を展開 · 変更はURLで共有</div>
+    </div>
+    <div class="sync"><div class="sdot" id="sdot"></div><span id="slabel">起動中</span></div>
+  </div>
+</div>
+
+<div class="metrics" id="metrics"></div>
+<div class="alerts"  id="alerts"></div>
+<div class="filters" id="filters"></div>
+<div class="share-bar">
+  <button class="sbtn"     onclick="importFromURL()">📥 URLから読込</button>
+  <button class="sbtn pri" onclick="shareURL()">🔗 共有URLを作成</button>
+</div>
+<div class="cards" id="cards"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const BASE=[
+  {id:1, name:"新虎安田ビル",              sub:"THE TOBACCO SHIMBASHI",       time:"20:00以降（平日/日曜）"},
+  {id:2, name:"ひばりが丘パルコ",           sub:"THE TOBACCO HIBARIGAOKA",     time:"20:30〜7:30"},
+  {id:3, name:"錦糸町パルコ",              sub:"THE TOBACCO KINSHICHO23",     time:"21:00〜9:00"},
+  {id:4, name:"仙台第一生命タワービル",       sub:"THE TOBACCO SENDAI THIRD",    time:"6:00〜9:00（6/13土）"},
+  {id:5, name:"東急スクエア",              sub:"THE TOBACCO AOBADAI",         time:"—"},
+  {id:6, name:"キャスト",                 sub:"THE TOBACCO SHIBUYA",         time:"7:00〜9:00（土曜）"},
+  {id:7, name:"新宿野村ビル",              sub:"THE TOBACCO NISHISHINJUKU",   time:"9:00〜11:00（平日）"},
+  {id:8, name:"サウスポット静岡",           sub:"THE TOBACCO SHIZUOKA",       time:"22:30〜（6/6土）"},
+  {id:9, name:"沼津第一生命ビル",           sub:"THE TOBACCO NUMAZU",         time:"9:00〜（6/14日）"},
+  {id:10,name:"浜松第一生命日通ビル",        sub:"THE TOBACCO HAMAMATSU",      time:"18:00〜（6/7日）"},
+  {id:11,name:"羽田イノベーションシティ",     sub:"THE TOBACCO TENKUBASHI 12",  time:"—"},
+  {id:12,name:"渋谷パルコ（2〜5F）",        sub:"THE TOBACCO SHIBUYA2~5",     time:"—"},
+  {id:13,name:"KDX横浜",                 sub:"THE TOBACCO KANAGAWA",        time:"—"},
+  {id:14,name:"フォアフロントタワー1",       sub:"THE TOBACCO KACHIDOKI1",     time:"—"},
+  {id:15,name:"フォアフロントタワー2",       sub:"THE TOBACCO KACHIDOKI2",     time:"—"},
+  {id:16,name:"Hareza Tower 7F",        sub:"THE TOBACCO IKEBUKURO NINTH", time:"—"},
+  {id:17,name:"大阪ベイタワー",             sub:"THE TOBACCO BENTENCHO",      time:"—"},
+  {id:18,name:"ヒューリック将棋会館 千駄ヶ谷ビル",sub:"",                     time:"—"},
+  {id:19,name:"三田日東ダイビル",           sub:"",                           time:"—"},
+];
+const DEFAULTS={
+  4:{approval:"OK",status:"作業届承認済み"},5:{approval:"OK"},6:{approval:"OK"},
+  8:{approval:"OK",status:"作業届承認済み"},9:{approval:"OK",status:"作業届承認済み"},
+  10:{approval:"OK",status:"作業届承認済み"},12:{approval:"OK"},
+  7:{approval:"未確認"},13:{approval:"未確認"},14:{approval:"未確認"},
+  15:{approval:"未確認"},16:{approval:"未確認"},17:{approval:"未確認"},
+  18:{approval:"未確認",status:"事前確認メール送付済み"},
+  19:{approval:"未確認",status:"事前確認メール送付済み"},
+};
+const APPROVAL_OPTS=["","未確認","確認中","OK"];
+const STATUS_OPTS=["","事前確認メール送付済み","作業届提出済み","作業届承認済み","作業完了"];
+const WARN_DAYS=3;
+const LS_KEY="june_cleaning_v4";
+
+let state={}, filter="all", openCards=new Set(), saveTimer=null;
+
+const today=()=>{const d=new Date();d.setHours(0,0,0,0);return d;};
+const parseDate=s=>{if(!s)return null;const d=new Date(s);d.setHours(0,0,0,0);return isNaN(d)?null:d;};
+const diffDays=d=>Math.round((d-today())/86400000);
+function dlStat(ds){
+  const d=parseDate(ds);if(!d)return null;
+  const n=diffDays(d);
+  if(n<0)  return{cls:"dl-over",label:`${Math.abs(n)}日超過`};
+  if(n<=WARN_DAYS)return{cls:"dl-soon",label:`残${n}日`};
+  return{cls:"dl-safe",label:`残${n}日`};
+}
+function lv(id){
+  const s=state[id]||{};
+  if(s.approval==="OK"||s.status==="作業届承認済み"||s.status==="作業完了")return"green";
+  if(s.status==="事前確認メール送付済み"||s.status==="作業届提出済み")return"amber";
+  if(s.approval==="未確認")return"red";
+  return"gray";
+}
+const LV_LBL={green:"確定",amber:"対応中",red:"要対応",gray:"未着手"};
+const LV_CLS={green:"gr",amber:"am",red:"rd",gray:"gy"};
+
+function setSyncing(on,msg){
+  const dot=document.getElementById("sdot"),lbl=document.getElementById("slabel");
+  if(dot)dot.className="sdot"+(on?" pulse":"");
+  if(lbl)lbl.textContent=msg;
+}
+function scheduleSave(){clearTimeout(saveTimer);saveTimer=setTimeout(()=>{
+  try{localStorage.setItem(LS_KEY,JSON.stringify(state));}catch(e){}
+  setSyncing(false,"保存済み ✓");
+},400);}
+
+function load(){
+  setSyncing(true,"起動中");
+  if(location.hash&&location.hash.length>1){
+    try{
+      state=JSON.parse(decodeURIComponent(atob(location.hash.slice(1))));
+      history.replaceState(null,"",location.pathname);
+      setSyncing(false,"URLから読込 ✓");showToast("共有データを読み込みました ✓");
+      render();return;
+    }catch(e){}
+  }
+  try{
+    const saved=localStorage.getItem(LS_KEY);
+    if(saved){state=JSON.parse(saved);setSyncing(false,"保存済み ✓");render();return;}
+  }catch(e){}
+  state={};
+  BASE.forEach(r=>{const d=DEFAULTS[r.id]||{};
+    state[r.id]={approval:d.approval||"",status:d.status||"",time:r.time,submitDL:"",confirmDL:"",memo:""};
+  });
+  setSyncing(false,"初期データ");render();
+}
+
+function shareURL(){
+  try{
+    const encoded=btoa(encodeURIComponent(JSON.stringify(state)));
+    const url=location.href.split("#")[0]+"#"+encoded;
+    if(navigator.share){navigator.share({title:"6月定期清掃 管理ボード",url});}
+    else if(navigator.clipboard){navigator.clipboard.writeText(url);showToast("共有URLをコピーしました 📋");}
+    else{prompt("このURLをコピーして共有してください:",url);}
+  }catch(e){showToast("URLの生成に失敗しました");}
+}
+function importFromURL(){
+  const url=prompt("共有URLを貼り付けてください:");
+  if(!url)return;
+  try{
+    const hash=url.includes("#")?url.split("#")[1]:url.trim();
+    state=JSON.parse(decodeURIComponent(atob(hash)));
+    scheduleSave();render();showToast("データを読み込みました ✓");
+  }catch(e){showToast("URLが正しくありません");}
+}
+function showToast(msg){
+  const t=document.getElementById("toast");
+  t.textContent=msg;t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"),2800);
+}
+
+/* ── RENDER ── */
+function renderMetrics(){
+  const c={green:0,amber:0,red:0,gray:0};
+  BASE.forEach(r=>c[lv(r.id)]++);
+  document.getElementById("metrics").innerHTML=[
+    {k:"green",l:"確定"},
+    {k:"amber",l:"対応中"},
+    {k:"red",  l:"要対応"},
+    {k:"gray", l:"未着手"},
+  ].map(m=>`<div class="metric ${LV_CLS[m.k]}">
+    <div class="metric-num" style="color:var(--c-${m.k})">${c[m.k]}</div>
+    <div class="metric-lbl">${m.l}</div>
+  </div>`).join("");
+}
+
+function renderAlerts(){
+  const items=[];
+  BASE.forEach(row=>{
+    const s=state[row.id]||{};
+    const sd=dlStat(s.submitDL),cd=dlStat(s.confirmDL);
+    if(sd&&(sd.cls==="dl-over"||sd.cls==="dl-soon"))
+      items.push({cls:sd.cls==="dl-over"?"urg":"wrn",
+        icon:sd.cls==="dl-over"?"🚨":"⏰",
+        msg:`【${row.name}】提出期限 ${s.submitDL}（${sd.label}）`});
+    if(cd&&(cd.cls==="dl-over"||cd.cls==="dl-soon"))
+      items.push({cls:cd.cls==="dl-over"?"urg":"wrn",
+        icon:cd.cls==="dl-over"?"🚨":"⏰",
+        msg:`【${row.name}】確認期限 ${s.confirmDL}（${cd.label}）`});
+  });
+  document.getElementById("alerts").innerHTML=items.map(a=>
+    `<div class="alert ${a.cls}"><span>${a.icon}</span><span>${a.msg}</span></div>`
+  ).join("");
+}
+
+function renderFilters(){
+  const tabs=[
+    {k:"all",l:"すべて"},
+    {k:"red",l:"🔴 要対応"},
+    {k:"amber",l:"🟡 対応中"},
+    {k:"green",l:"🟢 確定"},
+    {k:"gray",l:"⬜ 未着手"},
+  ];
+  document.getElementById("filters").innerHTML=tabs.map(t=>
+    `<button class="fbtn${filter===t.k?" on":""}" onclick="setFilter('${t.k}')">${t.l}</button>`
+  ).join("");
+}
+
+function renderCards(){
+  const rows=filter==="all"?BASE:BASE.filter(r=>lv(r.id)===filter);
+  document.getElementById("cards").innerHTML=rows.map(row=>{
+    const s=state[row.id]||{approval:"",status:"",time:row.time,submitDL:"",confirmDL:"",memo:""};
+    const l=lv(row.id);
+    const sd=dlStat(s.submitDL),cd=dlStat(s.confirmDL);
+    const isOpen=openCards.has(row.id);
+    const aOpts=APPROVAL_OPTS.map(o=>`<option value="${o}"${s.approval===o?" selected":""}>${o||"未設定"}</option>`).join("");
+    const stOpts=STATUS_OPTS.map(o=>`<option value="${o}"${s.status===o?" selected":""}>${o||"未設定"}</option>`).join("");
+    const sdTag=sd?`<div class="dl-tag ${sd.cls}">📅 提出 ${s.submitDL} · ${sd.label}</div>`:"";
+    const cdTag=cd?`<div class="dl-tag ${cd.cls}">✅ 確認 ${s.confirmDL} · ${cd.label}</div>`:"";
+    return `<div class="card lv-${l}" id="card-${row.id}">
+      <div class="card-hdr" onclick="toggleCard(${row.id})">
+        <div style="min-width:0">
+          <div class="prop-name">${row.name}</div>
+          ${row.sub?`<div class="prop-sub">${row.sub}</div>`:""}
+          ${s.time&&s.time!=="—"?`<div class="prop-time">🕐 ${s.time}</div>`:""}
+          ${sd||cd?`<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:5px">${sdTag}${cdTag}</div>`:""}
+        </div>
+        <div class="card-right">
+          <span class="badge ${LV_CLS[l]}">${LV_LBL[l]}</span>
+          <span class="chevron${isOpen?" open":""}">▼</span>
+        </div>
+      </div>
+      <div class="card-body${isOpen?" open":""}" id="body-${row.id}">
+        <div class="divider"></div>
+        <div class="field">
+          <div class="flabel">作業時間帯</div>
+          <input class="finput" type="text"
+            value="${(s.time||"").replace(/"/g,"&quot;")}"
+            placeholder="例: 21:00〜9:00（6/15土）"
+            oninput="upd(${row.id},'time',this.value)">
+        </div>
+        <div class="row2">
+          <div class="field">
+            <div class="flabel">承認状況</div>
+            <div class="sel-wrap"><select class="finput" onchange="upd(${row.id},'approval',this.value)">${aOpts}</select></div>
+          </div>
+          <div class="field">
+            <div class="flabel">ステータス</div>
+            <div class="sel-wrap"><select class="finput" onchange="upd(${row.id},'status',this.value)">${stOpts}</select></div>
+          </div>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <div class="flabel">📅 提出期限</div>
+            <input class="finput" type="date" value="${s.submitDL||""}" onchange="upd(${row.id},'submitDL',this.value)">
+            ${sd?`<div class="dl-tag ${sd.cls}">${sd.label}</div>`:""}
+          </div>
+          <div class="field">
+            <div class="flabel">✅ 確認期限</div>
+            <input class="finput" type="date" value="${s.confirmDL||""}" onchange="upd(${row.id},'confirmDL',this.value)">
+            ${cd?`<div class="dl-tag ${cd.cls}">${cd.label}</div>`:""}
+          </div>
+        </div>
+        <div class="field">
+          <div class="flabel">メモ</div>
+          <input class="finput" type="text"
+            value="${(s.memo||"").replace(/"/g,"&quot;")}"
+            placeholder="担当者・備考など..."
+            oninput="upd(${row.id},'memo',this.value)">
+        </div>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function render(){renderMetrics();renderAlerts();renderFilters();renderCards();}
+
+window.toggleCard=function(id){
+  if(openCards.has(id))openCards.delete(id);else openCards.add(id);
+  renderCards();
+};
+window.setFilter=function(f){filter=f;renderFilters();renderCards();};
+window.upd=function(id,field,val){
+  if(!state[id])state[id]={approval:"",status:"",time:"",submitDL:"",confirmDL:"",memo:""};
+  state[id][field]=val;
+  setSyncing(true,"保存中...");
+  scheduleSave();render();
+};
+window.shareURL=shareURL;
+window.importFromURL=importFromURL;
+
+load();
+</script>
+</body>
+</html>
