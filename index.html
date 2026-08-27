@@ -3,418 +3,2666 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>6月定期清掃 管理ボード</title>
+<title>定期清掃 管理ボード</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:       #F5F4F0;
-  --surface:  #FFFFFF;
-  --surface2: #EEECEA;
-  --border:   #DDDBD5;
-  --text:     #1C1B18;
-  --text2:    #6A6960;
-  --text3:    #A09E97;
-
-  /* ステータスカラー — 明確な4色 */
-  --c-green:  #1A7A2E;  --bg-green:  #D6F0DC;  --bd-green:  #6DC97F;
-  --c-amber:  #8A5200;  --bg-amber:  #FDECC8;  --bd-amber:  #F0B429;
-  --c-red:    #C0181E;  --bg-red:    #FDE8E8;  --bd-red:    #F07070;
-  --c-gray:   #5A5955;  --bg-gray:   #EBEBEB;  --bd-gray:   #C5C4C0;
-
-  --accent: #1A5C28;
-  --radius: 12px; --radius-sm: 8px;
+  color-scheme: light dark;
+  --bg:#F5F4F0; --surface:#FFFFFF; --surface2:#EEECEA; --surface3:#E4E2DE;
+  --border:#DDDBD5; --text:#1C1B18; --text2:#5C5B54; --text3:#6E6C64;
+  --c-green:#1A7A2E; --bg-green:#D6F0DC; --bd-green:#6DC97F;
+  --c-amber:#8A5200; --bg-amber:#FDECC8; --bd-amber:#F0B429;
+  --c-red:#C0181E;   --bg-red:#FDE8E8;   --bd-red:#F07070;
+  --c-blue:#14507A;  --bg-blue:#DCEBF7;  --bd-blue:#6BAAD8;
+  --c-gray:#5A5955;  --bg-gray:#EBEBEB;  --bd-gray:#C5C4C0;
+  --accent:#1A5C28; --accent-fg:#FFFFFF;
+  --radius:12px; --radius-sm:8px;
 }
 @media (prefers-color-scheme: dark) {
-  :root {
-    --bg:#131210; --surface:#1D1C1A; --surface2:#272522;
-    --border:#302E2B; --text:#F0EDE6; --text2:#999790; --text3:#666460;
+  :root:not([data-theme="light"]) {
+    --bg:#131210; --surface:#1D1C1A; --surface2:#272522; --surface3:#332F2B;
+    --border:#302E2B; --text:#F0EDE6; --text2:#A8A69E; --text3:#8E8C84;
     --c-green:#5DD97A; --bg-green:#0C2E14; --bd-green:#2A6E3A;
     --c-amber:#F5C144; --bg-amber:#2B1D00; --bd-amber:#8A5200;
-    --c-red:  #F07878; --bg-red:  #2E0A0A; --bd-red:  #8B2020;
-    --c-gray: #A09E97; --bg-gray: #222120; --bd-gray: #3A3836;
-    --accent:#5DD97A;
+    --c-red:#F07878;   --bg-red:#2E0A0A;   --bd-red:#8B2020;
+    --c-blue:#7FC0EE;  --bg-blue:#0A1E2E;  --bd-blue:#2A5A80;
+    --c-gray:#A09E97;  --bg-gray:#222120;  --bd-gray:#3A3836;
+    --accent:#5DD97A; --accent-fg:#0A1F0D;
   }
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);min-height:100dvh;}
+body{font-family:'Noto Sans JP','Hiragino Sans','Hiragino Kaku Gothic ProN','Yu Gothic',sans-serif;
+  background:var(--bg);color:var(--text);min-height:100vh;min-height:100dvh;
+  -webkit-text-size-adjust:100%;}
+button{font-family:inherit;}
+.mono{font-family:'DM Mono',ui-monospace,monospace;}
 
-/* ────── HEADER ────── */
-.hdr{background:var(--surface);border-bottom:1px solid var(--border);
-  padding:env(safe-area-inset-top,0) 0 0;position:sticky;top:0;z-index:100;}
-.hdr-inner{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 12px;gap:8px;}
-.hdr h1{font-size:16px;font-weight:600;letter-spacing:-.3px;}
+/* HEADER */
+.topbar{position:sticky;top:0;z-index:100;background:var(--surface);
+  box-shadow:0 1px 0 var(--border);}
+.hdr{background:var(--surface);padding:env(safe-area-inset-top,0) 0 0;}
+.hdr-inner{display:flex;align-items:center;justify-content:space-between;padding:12px 16px 10px;gap:8px;}
+.hdr h1{font-size:15px;font-weight:600;letter-spacing:-.3px;}
 .hdr-sub{font-size:11px;color:var(--text3);margin-top:2px;}
-.sync{display:flex;align-items:center;gap:5px;background:var(--surface2);
-  border-radius:20px;padding:5px 11px;font-size:11px;color:var(--text2);white-space:nowrap;}
-.sdot{width:7px;height:7px;border-radius:50%;background:var(--c-green);flex-shrink:0;}
-.sdot.pulse{background:var(--c-amber);animation:blink .9s infinite;}
+.sync{display:flex;align-items:center;gap:5px;background:var(--surface2);border:1px solid var(--border);
+  border-radius:20px;padding:5px 11px;font-size:11px;color:var(--text2);white-space:nowrap;cursor:pointer;}
+.sdot{width:7px;height:7px;border-radius:50%;background:var(--c-gray);flex-shrink:0;}
+.sdot.ok{background:var(--c-green);}
+.sdot.busy{background:var(--c-amber);animation:blink .9s infinite;}
+.sdot.err{background:var(--c-red);}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
 
-/* ────── METRICS ────── */
-.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:12px 16px;}
+/* MONTH BAR */
+.mbar{display:flex;align-items:center;gap:6px;padding:0 16px 10px;}
+.mnav{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);
+  width:36px;height:36px;font-size:15px;color:var(--text2);cursor:pointer;flex-shrink:0;}
+.mnav:active{background:var(--surface3);}
+.msel{flex:1;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);
+  padding:8px 10px;font-size:16px;font-weight:600;color:var(--text);text-align:center;
+  font-family:inherit;appearance:none;-webkit-appearance:none;cursor:pointer;}
+.mtoday{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);
+  padding:9px 12px;font-size:12px;color:var(--text2);cursor:pointer;flex-shrink:0;}
+
+/* TABS */
+.tabs{display:flex;gap:2px;padding:0 12px;background:var(--surface);
+  border-top:1px solid var(--border);overflow-x:auto;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{flex-shrink:0;background:none;border:none;border-bottom:2.5px solid transparent;
+  padding:11px 9px;font-size:12.5px;color:var(--text3);cursor:pointer;white-space:nowrap;font-weight:500;}
+.tab.on{color:var(--text);border-bottom-color:var(--accent);font-weight:600;}
+.tab .cnt{display:inline-block;background:var(--c-red);color:#fff;border-radius:9px;
+  font-size:10px;padding:1px 5px;margin-left:4px;font-weight:700;vertical-align:1px;}
+.pane{display:none;}
+.pane.on{display:block;}
+
+/* METRICS */
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;padding:12px 16px 4px;}
 .metric{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);
-  padding:10px 6px;text-align:center;}
-.metric-num{font-size:24px;font-weight:600;line-height:1;}
-.metric-lbl{font-size:10px;color:var(--text2);margin-top:3px;letter-spacing:.2px;}
-.metric.gr{border-color:var(--bd-green);background:var(--bg-green);}
-.metric.am{border-color:var(--bd-amber);background:var(--bg-amber);}
-.metric.rd{border-color:var(--bd-red);  background:var(--bg-red);}
-.metric.gy{border-color:var(--bd-gray); background:var(--bg-gray);}
+  padding:9px 4px;text-align:center;cursor:pointer;}
+.metric-num{font-size:22px;font-weight:700;line-height:1.1;}
+.metric-lbl{font-size:11px;color:var(--text2);margin-top:2px;letter-spacing:.1px;}
+.metric.on{box-shadow:inset 0 0 0 2px var(--text);}
+.m-gr{border-color:var(--bd-green);background:var(--bg-green);}
+.m-am{border-color:var(--bd-amber);background:var(--bg-amber);}
+.m-rd{border-color:var(--bd-red);background:var(--bg-red);}
+.m-bl{border-color:var(--bd-blue);background:var(--bg-blue);}
+.m-gy{border-color:var(--bd-gray);background:var(--bg-gray);}
 
-/* ────── ALERTS ────── */
-.alerts{padding:0 16px 4px;display:flex;flex-direction:column;gap:6px;}
+/* ALERTS */
+.alerts{padding:8px 16px 0;display:flex;flex-direction:column;gap:6px;}
 .alert{display:flex;align-items:flex-start;gap:8px;border-radius:var(--radius-sm);
-  padding:10px 13px;font-size:12px;line-height:1.5;font-weight:500;}
-.alert.urg{background:var(--bg-red);  color:var(--c-red);  border:1.5px solid var(--bd-red);}
-.alert.wrn{background:var(--bg-amber);color:var(--c-amber);border:1.5px solid var(--bd-amber);}
+  padding:9px 12px;font-size:12px;line-height:1.5;font-weight:500;cursor:pointer;text-align:left;
+  border:1.5px solid;width:100%;background:none;}
+.alert.urg{background:var(--bg-red);color:var(--c-red);border-color:var(--bd-red);}
+.alert.wrn{background:var(--bg-amber);color:var(--c-amber);border-color:var(--bd-amber);}
+.alert.info{background:var(--bg-blue);color:var(--c-blue);border-color:var(--bd-blue);}
 
-/* ────── FILTERS ────── */
-.filters{display:flex;gap:6px;padding:10px 16px;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+/* FILTERS + BAR */
+.filters{display:flex;gap:6px;padding:10px 16px 6px;overflow-x:auto;}
 .filters::-webkit-scrollbar{display:none;}
 .fbtn{flex-shrink:0;background:var(--surface);border:1.5px solid var(--border);
-  border-radius:20px;padding:6px 15px;font-size:12px;color:var(--text2);
-  cursor:pointer;font-family:inherit;white-space:nowrap;transition:all .15s;}
+  border-radius:20px;padding:6px 13px;font-size:12px;color:var(--text2);cursor:pointer;white-space:nowrap;}
 .fbtn.on{background:var(--text);color:var(--bg);border-color:var(--text);}
-
-/* ────── SHARE BAR ────── */
-.share-bar{display:flex;gap:8px;padding:6px 16px 12px;}
-.sbtn{flex:1;background:var(--surface);border:1.5px solid var(--border);
+.bar{display:flex;gap:7px;padding:4px 16px 10px;flex-wrap:wrap;}
+.sbtn{flex:1;min-width:130px;background:var(--surface);border:1.5px solid var(--border);
   border-radius:var(--radius-sm);padding:11px 10px;font-size:13px;color:var(--text2);
-  cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;}
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;}
 .sbtn:active{background:var(--surface2);}
-.sbtn.pri{background:var(--accent);color:#fff;border-color:transparent;font-weight:600;}
-@media(prefers-color-scheme:dark){.sbtn.pri{color:#0A1F0D;}}
+.sbtn.pri{background:var(--accent);color:var(--accent-fg);border-color:transparent;font-weight:600;}
+.sbtn.sm{flex:0 0 auto;min-width:0;padding:8px 12px;font-size:12px;}
 
-/* ────── CARDS ────── */
-.cards{padding:0 16px 100px;display:flex;flex-direction:column;gap:10px;}
-
+/* CARDS */
+.cards{padding:0 16px calc(env(safe-area-inset-bottom,0px) + 64px);display:flex;flex-direction:column;gap:9px;}
 .card{background:var(--surface);border-radius:var(--radius);overflow:hidden;
   border:1.5px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.06);}
-.card.lv-red   {border-color:var(--bd-red);  border-left:4px solid var(--c-red);}
-.card.lv-amber {border-color:var(--bd-amber);border-left:4px solid var(--c-amber);}
-.card.lv-green {border-color:var(--bd-green);border-left:4px solid var(--c-green);}
-.card.lv-gray  {border-left:4px solid var(--bd-gray);}
-
-.card-hdr{display:flex;align-items:flex-start;justify-content:space-between;
-  padding:13px 14px 11px;cursor:pointer;gap:8px;user-select:none;}
+.card.lv-red{border-color:var(--bd-red);border-left:4px solid var(--c-red);}
+.card.lv-amber{border-color:var(--bd-amber);border-left:4px solid var(--c-amber);}
+.card.lv-green{border-color:var(--bd-green);border-left:4px solid var(--c-green);}
+.card.lv-blue{border-color:var(--bd-blue);border-left:4px solid var(--c-blue);}
+.card.lv-gray{border-left:4px solid var(--bd-gray);}
+.card-hdr{display:flex;align-items:flex-start;justify-content:space-between;width:100%;
+  padding:12px 13px 11px;cursor:pointer;gap:8px;background:none;border:none;text-align:left;color:inherit;}
 .card-hdr:active{background:var(--surface2);}
-.prop-name{font-size:14px;font-weight:600;line-height:1.3;}
-.prop-sub{font-size:11px;color:var(--text3);margin-top:2px;font-family:'DM Mono',monospace;}
-.prop-time{font-size:11px;color:var(--text2);margin-top:4px;}
-
+.prop-name{font-size:14px;font-weight:600;line-height:1.35;overflow-wrap:anywhere;}
+.prop-sub{font-size:10.5px;color:var(--text3);margin-top:2px;font-family:'DM Mono',monospace;}
+.prop-time{font-size:11px;color:var(--text2);margin-top:4px;line-height:1.4;}
 .card-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;}
-.badge{display:inline-block;border-radius:20px;padding:4px 10px;
-  font-size:11px;font-weight:600;white-space:nowrap;letter-spacing:.2px;}
-.badge.gr{background:var(--bg-green);color:var(--c-green);border:1px solid var(--bd-green);}
-.badge.am{background:var(--bg-amber);color:var(--c-amber);border:1px solid var(--bd-amber);}
-.badge.rd{background:var(--bg-red);  color:var(--c-red);  border:1px solid var(--bd-red);}
-.badge.gy{background:var(--bg-gray); color:var(--c-gray); border:1px solid var(--bd-gray);}
-.chevron{font-size:12px;color:var(--text3);transition:transform .2s;}
+.badge{display:inline-block;border-radius:20px;padding:4px 9px;font-size:10.5px;
+  font-weight:600;white-space:nowrap;border:1px solid;}
+.b-gr{background:var(--bg-green);color:var(--c-green);border-color:var(--bd-green);}
+.b-am{background:var(--bg-amber);color:var(--c-amber);border-color:var(--bd-amber);}
+.b-rd{background:var(--bg-red);color:var(--c-red);border-color:var(--bd-red);}
+.b-bl{background:var(--bg-blue);color:var(--c-blue);border-color:var(--bd-blue);}
+.b-gy{background:var(--bg-gray);color:var(--c-gray);border-color:var(--bd-gray);}
+.chevron{font-size:11px;color:var(--text3);transition:transform .2s;}
 .chevron.open{transform:rotate(180deg);}
-
-.card-body{padding:0 14px 14px;display:none;flex-direction:column;gap:11px;}
+.card-body{padding:0 13px 13px;display:none;flex-direction:column;gap:10px;}
 .card-body.open{display:flex;}
-.divider{height:1px;background:var(--border);margin:2px 0 4px;}
+.divider{height:1px;background:var(--border);margin:2px 0 2px;}
+
+/* STEPPER */
+.steps{display:flex;gap:3px;}
+.step{flex:1;height:5px;border-radius:3px;background:var(--surface3);}
+.step.done{background:var(--c-green);}
+.step.now{background:var(--c-amber);}
+.steplbl{font-size:11px;color:var(--text2);text-align:center;margin-top:-4px;}
 
 .field{display:flex;flex-direction:column;gap:5px;}
-.flabel{font-size:11px;color:var(--text3);font-weight:500;letter-spacing:.4px;text-transform:uppercase;}
-.finput{background:var(--surface2);border:1.5px solid var(--border);
-  border-radius:var(--radius-sm);padding:10px 12px;
-  font-size:14px;color:var(--text);font-family:inherit;width:100%;}
+.flabel{font-size:11px;color:var(--text3);font-weight:600;letter-spacing:.3px;}
+.finput{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);
+  padding:10px 12px;font-size:16px;color:var(--text);font-family:inherit;width:100%;}
 .finput:focus{outline:none;border-color:var(--accent);}
+textarea.finput{min-height:110px;resize:vertical;line-height:1.6;font-size:16px;}
 .sel-wrap{position:relative;}
 .sel-wrap select{appearance:none;-webkit-appearance:none;}
-.sel-wrap::after{content:'▾';position:absolute;right:12px;top:50%;
-  transform:translateY(-50%);color:var(--text3);pointer-events:none;font-size:12px;}
+.sel-wrap::after{content:'▾';position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  color:var(--text3);pointer-events:none;font-size:12px;}
 .row2{display:flex;gap:8px;}
-.row2 .field{flex:1;}
+.row2>*{flex:1;min-width:0;}
+.row3{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:8px;}
+.flabel{overflow-wrap:anywhere;}
+.dl-tag{display:inline-flex;align-items:center;gap:4px;border-radius:6px;padding:3px 8px;
+  font-size:11px;font-weight:600;border:1px solid;}
+.dl-over{background:var(--bg-red);color:var(--c-red);border-color:var(--bd-red);}
+.dl-soon{background:var(--bg-amber);color:var(--c-amber);border-color:var(--bd-amber);}
+.dl-safe{background:var(--bg-green);color:var(--c-green);border-color:var(--bd-green);}
+.tagrow{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px;}
 
-/* deadline tag */
-.dl-tag{display:inline-flex;align-items:center;gap:4px;
-  border-radius:6px;padding:4px 9px;font-size:12px;font-weight:600;margin-top:4px;}
-.dl-over{background:var(--bg-red);  color:var(--c-red);  border:1px solid var(--bd-red);}
-.dl-soon{background:var(--bg-amber);color:var(--c-amber);border:1px solid var(--bd-amber);}
-.dl-safe{background:var(--bg-green);color:var(--c-green);border:1px solid var(--bd-green);}
+/* GENERIC BOXES */
+.sect{padding:12px 16px 4px;}
+.sect h2{font-size:13px;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.sect h2 .hint{font-size:11px;color:var(--text3);font-weight:400;}
+.box{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:13px;}
+.box+.box{margin-top:9px;}
+.note{font-size:11.5px;color:var(--text2);line-height:1.65;}
+.note code{background:var(--surface2);padding:1px 5px;border-radius:4px;font-family:'DM Mono',monospace;font-size:11px;}
+.drop{border:2px dashed var(--border);border-radius:var(--radius);padding:18px 12px;text-align:center;
+  font-size:12px;color:var(--text3);background:var(--surface2);}
+.drop.hot{border-color:var(--accent);color:var(--accent);background:var(--bg-green);}
+.empty{text-align:center;color:var(--text3);font-size:12.5px;padding:26px 16px;line-height:1.7;}
 
-/* ────── TOAST ────── */
+/* PARSE RESULT */
+.pcard{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);
+  padding:11px 12px;display:flex;flex-direction:column;gap:7px;}
+.pcard.hi{border-color:var(--bd-green);}
+.pcard.lo{border-color:var(--bd-amber);}
+.pcard.no{border-color:var(--bd-red);}
+.ptop{display:flex;justify-content:space-between;gap:8px;align-items:flex-start;}
+.pname{font-size:13.5px;font-weight:600;line-height:1.3;}
+.pmeta{font-size:10.5px;color:var(--text3);margin-top:2px;line-height:1.5;word-break:break-all;}
+.pdiff{font-size:12px;line-height:1.7;background:var(--surface2);border-radius:6px;padding:8px 10px;}
+.pdiff b{color:var(--c-green);}
+.pdiff s{color:var(--text2);}
+.prow{display:grid;grid-template-columns:repeat(auto-fit,minmax(142px,1fr));gap:6px;}
+.prow .sbtn{min-width:0;padding:9px 8px;font-size:12px;text-align:center;}
+
+/* LOG */
+.logitem{display:flex;gap:8px;font-size:11.5px;line-height:1.6;padding:8px 0;
+  border-bottom:1px solid var(--border);}
+.logitem:last-child{border-bottom:none;}
+.logts{color:var(--text3);white-space:nowrap;font-family:'DM Mono',monospace;font-size:10.5px;flex-shrink:0;}
+.logsrc{flex-shrink:0;font-size:10px;padding:1px 5px;border-radius:4px;border:1px solid var(--border);
+  color:var(--text2);background:var(--surface2);height:fit-content;white-space:nowrap;}
+.logsrc.mail{border-color:var(--bd-blue);color:var(--c-blue);background:var(--bg-blue);}
+.logsrc.auto{border-color:var(--bd-green);color:var(--c-green);background:var(--bg-green);}
+
+/* MAIL PREVIEW */
+pre.mail{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);
+  padding:11px;font-size:12px;line-height:1.75;white-space:pre-wrap;word-break:break-word;
+  font-family:inherit;max-height:320px;overflow-y:auto;}
+pre.code{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);
+  padding:11px;font-size:10.5px;line-height:1.55;overflow-x:auto;max-height:260px;
+  font-family:'DM Mono',ui-monospace,monospace;}
+.kv{display:flex;justify-content:space-between;gap:10px;font-size:12px;padding:5px 0;
+  border-bottom:1px solid var(--border);}
+.kv:last-child{border-bottom:none;}
+.kv .k{color:var(--text2);flex-shrink:0;}
+.kv .v{text-align:right;word-break:break-all;font-weight:500;}
+
 .toast{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 20px);left:50%;
-  transform:translateX(-50%) translateY(80px);
-  background:var(--text);color:var(--bg);border-radius:var(--radius);
-  padding:11px 22px;font-size:13px;white-space:nowrap;z-index:999;
-  transition:transform .3s cubic-bezier(.34,1.56,.64,1);
-  box-shadow:0 4px 20px rgba(0,0,0,.25);}
+  transform:translateX(-50%) translateY(90px);background:var(--text);color:var(--bg);
+  border-radius:var(--radius);padding:11px 20px;font-size:13px;max-width:88vw;text-align:center;
+  z-index:999;transition:transform .3s cubic-bezier(.34,1.56,.64,1);box-shadow:0 4px 20px rgba(0,0,0,.25);}
 .toast.show{transform:translateX(-50%) translateY(0);}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);}
+.banner{margin:10px 16px 0;padding:10px 12px;border-radius:var(--radius-sm);font-size:12px;
+  line-height:1.55;border:1.5px solid var(--bd-blue);background:var(--bg-blue);color:var(--c-blue);
+  display:flex;gap:8px;align-items:center;justify-content:space-between;}
+.banner button{background:var(--c-blue);color:var(--surface);border:none;border-radius:6px;
+  padding:6px 11px;font-size:12px;font-weight:600;cursor:pointer;flex-shrink:0;}
+.pick{max-height:46vh;overflow-y:auto;border:1.5px solid var(--border);border-radius:var(--radius-sm);
+  background:var(--surface2);padding:4px;margin-top:8px;}
+.pick label{display:flex;gap:9px;align-items:center;padding:9px 8px;font-size:13.5px;
+  border-bottom:1px solid var(--border);cursor:pointer;}
+.pick label:last-child{border-bottom:none;}
+.pick input{width:19px;height:19px;flex-shrink:0;accent-color:var(--accent);}
+.pick .pc{font-size:10.5px;color:var(--text3);font-family:'DM Mono',monospace;}
+.warn-tag{display:inline-flex;align-items:center;gap:4px;border-radius:6px;padding:3px 8px;
+  font-size:11px;font-weight:600;border:1px solid var(--bd-amber);
+  background:var(--bg-amber);color:var(--c-amber);}
+.undo{background:var(--surface);border:1.5px solid var(--bd-amber);color:var(--c-amber);
+  border-radius:var(--radius-sm);padding:9px 12px;font-size:12px;font-weight:600;cursor:pointer;width:100%;}
+.contact-row{display:flex;gap:6px;margin-bottom:6px;}
+.contact-row input{flex:1;min-width:0;}
+.contact-row button{flex:0 0 auto;background:var(--surface2);border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);color:var(--text2);padding:0 12px;cursor:pointer;font-size:15px;}
 </style>
 </head>
 <body>
 
+<div class="topbar">
 <div class="hdr">
   <div class="hdr-inner">
     <div>
-      <h1>6月定期清掃 管理ボード</h1>
-      <div class="hdr-sub">タップで物件を展開 · 変更はURLで共有</div>
+      <h1>定期美化清掃 管理ボード</h1>
+      <div class="hdr-sub" id="hdrsub">株式会社コソド / 喫煙室定期清掃</div>
     </div>
-    <div class="sync"><div class="sdot" id="sdot"></div><span id="slabel">起動中</span></div>
+    <button class="sync" id="syncbtn" onclick="pollNow()" title="Gmail連携の状態。押すと取込／設定画面を開きます">
+      <span class="sdot" id="sdot"></span><span id="slabel">起動中</span>
+    </button>
+  </div>
+  <div class="mbar">
+    <button class="mnav" onclick="shiftMonth(-1)" aria-label="前月">‹</button>
+    <select class="msel" id="msel" onchange="setMonth(this.value)"></select>
+    <button class="mnav" onclick="shiftMonth(1)" aria-label="翌月">›</button>
+    <button class="mtoday" onclick="setMonth(thisMonth())">今月</button>
   </div>
 </div>
-
-<div class="metrics" id="metrics"></div>
-<div class="alerts"  id="alerts"></div>
-<div class="filters" id="filters"></div>
-<div class="share-bar">
-  <button class="sbtn"     onclick="importFromURL()">📥 URLから読込</button>
-  <button class="sbtn pri" onclick="shareURL()">🔗 共有URLを作成</button>
+<div class="tabs" id="tabs"></div>
 </div>
-<div class="cards" id="cards"></div>
-<div class="toast" id="toast"></div>
+
+<div class="pane on" id="pane-board"></div>
+<div class="pane" id="pane-inbox"></div>
+<div class="pane" id="pane-outbox"></div>
+<div class="pane" id="pane-log"></div>
+<div class="pane" id="pane-setup"></div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
-const BASE=[
-  {id:1, name:"新虎安田ビル",              sub:"THE TOBACCO SHIMBASHI",       time:"20:00以降（平日/日曜）"},
-  {id:2, name:"ひばりが丘パルコ",           sub:"THE TOBACCO HIBARIGAOKA",     time:"20:30〜7:30"},
-  {id:3, name:"錦糸町パルコ",              sub:"THE TOBACCO KINSHICHO23",     time:"21:00〜9:00"},
-  {id:4, name:"仙台第一生命タワービル",       sub:"THE TOBACCO SENDAI THIRD",    time:"6:00〜9:00（6/13土）"},
-  {id:5, name:"東急スクエア",              sub:"THE TOBACCO AOBADAI",         time:"—"},
-  {id:6, name:"キャスト",                 sub:"THE TOBACCO SHIBUYA",         time:"7:00〜9:00（土曜）"},
-  {id:7, name:"新宿野村ビル",              sub:"THE TOBACCO NISHISHINJUKU",   time:"9:00〜11:00（平日）"},
-  {id:8, name:"サウスポット静岡",           sub:"THE TOBACCO SHIZUOKA",       time:"22:30〜（6/6土）"},
-  {id:9, name:"沼津第一生命ビル",           sub:"THE TOBACCO NUMAZU",         time:"9:00〜（6/14日）"},
-  {id:10,name:"浜松第一生命日通ビル",        sub:"THE TOBACCO HAMAMATSU",      time:"18:00〜（6/7日）"},
-  {id:11,name:"羽田イノベーションシティ",     sub:"THE TOBACCO TENKUBASHI 12",  time:"—"},
-  {id:12,name:"渋谷パルコ（2〜5F）",        sub:"THE TOBACCO SHIBUYA2~5",     time:"—"},
-  {id:13,name:"KDX横浜",                 sub:"THE TOBACCO KANAGAWA",        time:"—"},
-  {id:14,name:"フォアフロントタワー1",       sub:"THE TOBACCO KACHIDOKI1",     time:"—"},
-  {id:15,name:"フォアフロントタワー2",       sub:"THE TOBACCO KACHIDOKI2",     time:"—"},
-  {id:16,name:"Hareza Tower 7F",        sub:"THE TOBACCO IKEBUKURO NINTH", time:"—"},
-  {id:17,name:"大阪ベイタワー",             sub:"THE TOBACCO BENTENCHO",      time:"—"},
-  {id:18,name:"ヒューリック将棋会館 千駄ヶ谷ビル",sub:"",                     time:"—"},
-  {id:19,name:"三田日東ダイビル",           sub:"",                           time:"—"},
+/* ═══════════════════════════════════════════════════════════════════
+   定期美化清掃 管理ボード  —  単一ファイル完結型
+   ・月ごと管理（YYYY-MM キー / 6ヶ月サイクル自動繰越）
+   ・受信メール → 自動解析 → 自動ステータス更新
+   ・送信メール → テンプレート自動生成 → 送信記録で自動進行
+   ・Gmail自動連携（Apps Script）でポーリング自動取込
+   ═══════════════════════════════════════════════════════════════════ */
+
+const LS_KEY   = "cosodo_cleaning_v5";
+const LS_LEGACY = "june_cleaning_v4";
+const SCHEMA   = 5;
+
+/* ── 工程定義（実際のメール運用に対応） ───────────────────────── */
+const STAGES = [
+  {k:0, label:"未着手（事前確認メールを送る）",     short:"未着手",   lv:"gray"},
+  {k:1, label:"事前確認 送付済（相手の回答待ち）",   short:"回答待ち", lv:"amber"},
+  {k:2, label:"条件回答 受領（日程を決める）",       short:"日程調整", lv:"amber"},
+  {k:3, label:"日程打診・作業届 提出済（承認待ち）", short:"承認待ち", lv:"amber"},
+  {k:4, label:"承認済・日程確定（作業を実施する）", short:"実施待ち", lv:"blue"},
+  {k:5, label:"作業完了（完了報告を送る）",         short:"報告待ち", lv:"amber"},
+  {k:6, label:"完了報告 送付済（完了）",             short:"完了",     lv:"green"},
 ];
-const DEFAULTS={
-  4:{approval:"OK",status:"作業届承認済み"},5:{approval:"OK"},6:{approval:"OK"},
-  8:{approval:"OK",status:"作業届承認済み"},9:{approval:"OK",status:"作業届承認済み"},
-  10:{approval:"OK",status:"作業届承認済み"},12:{approval:"OK"},
-  7:{approval:"未確認"},13:{approval:"未確認"},14:{approval:"未確認"},
-  15:{approval:"未確認"},16:{approval:"未確認"},17:{approval:"未確認"},
-  18:{approval:"未確認",status:"事前確認メール送付済み"},
-  19:{approval:"未確認",status:"事前確認メール送付済み"},
+const stageOf = k => STAGES[Math.max(0, Math.min(6, k|0))];
+
+/* ── 物件マスタ初期値 ────────────────────────────────────────────
+   物件名・THE TOBACCOコード・管理会社（法人名）のみを初期収録。
+   担当者名・メールアドレスは意図的に未収録 —
+   「連携」タブのGmail自動連携が実際の往来メールから自動登録する。 */
+const SEED_PROPS = [
+  {n:"新虎安田ビル",            c:"THE TOBACCO SHIMBASHI",        co:"",                    t:"20:00以降（平日/日曜）"},
+  {n:"ひばりが丘パルコ",         c:"THE TOBACCO HIBARIGAOKA",      co:"株式会社パルコ",        t:"20:30〜7:30"},
+  {n:"錦糸町パルコ",            c:"THE TOBACCO KINSHICHO23",      co:"株式会社パルコ",        t:"21:00〜9:00"},
+  {n:"仙台第一生命タワービル",    c:"THE TOBACCO SENDAI THIRD",     co:"",                    t:"6:00〜9:00（土曜）"},
+  {n:"東急スクエア",            c:"THE TOBACCO AOBADAI",          co:"東急モールズデベロップメント", t:""},
+  {n:"キャスト",               c:"THE TOBACCO SHIBUYA",          co:"",                    t:"7:00〜9:00（土曜）"},
+  {n:"新宿野村ビル",            c:"THE TOBACCO NISHISHINJUKU",    co:"",                    t:"9:00〜11:00（平日）"},
+  {n:"サウスポット静岡",         c:"THE TOBACCO SHIZUOKA",         co:"",                    t:"22:30〜（土曜）"},
+  {n:"沼津第一生命ビル",         c:"THE TOBACCO NUMAZU",           co:"",                    t:"9:00〜（日曜）"},
+  {n:"浜松第一生命日通ビル",      c:"THE TOBACCO HAMAMATSU",        co:"",                    t:"18:00〜（日曜）"},
+  {n:"羽田イノベーションシティ",  c:"THE TOBACCO TENKUBASHI 12",    co:"",                    t:""},
+  {n:"渋谷パルコ（2〜5F）",      c:"THE TOBACCO SHIBUYA2~5",       co:"株式会社パルコ",        t:"", a:["渋谷パルコ"]},
+  {n:"KDX横浜",               c:"THE TOBACCO KANAGAWA",         co:"",                    t:""},
+  {n:"フォアフロントタワー1",     c:"THE TOBACCO KACHIDOKI1",       co:"",                    t:""},
+  {n:"フォアフロントタワー2",     c:"THE TOBACCO KACHIDOKI2",       co:"",                    t:""},
+  {n:"Hareza Tower 7F",      c:"THE TOBACCO IKEBUKURO NINTH",  co:"",                    t:""},
+  {n:"大阪ベイタワー",          c:"THE TOBACCO BENTENCHO",        co:"",                    t:""},
+  {n:"ヒューリック将棋会館 千駄ヶ谷ビル", c:"",                     co:"ヒューリック",          t:""},
+  {n:"三田日東ダイビル",         c:"",                            co:"",                    t:""},
+  /* ── 往来メールから確認された物件 ── */
+  {n:"オリナス錦糸町",          c:"THE TOBACCO KINSHICHO",        co:"双日商業開発株式会社",   t:"8:00〜10:00"},
+  {n:"調布パルコ",             c:"THE TOBACCO CHOFU",            co:"株式会社パルコ",        t:"6:00〜8:00"},
+  {n:"吉祥寺パルコ",            c:"THE TOBACCO KICHIJOJI",        co:"株式会社パルコ",        t:"17:00〜19:00"},
+  {n:"上野パルコヤ",            c:"THE TOBACCO UENO",             co:"株式会社パルコ",        t:"23:00〜25:00", a:["上野パルコ"]},
+  {n:"福岡パルコ",             c:"",                             co:"株式会社パルコ",        t:"23:00〜翌5:00"},
+  {n:"浦和パルコ",             c:"",                             co:"株式会社パルコ",        t:"23:00〜27:00"},
+  {n:"パシフィコ横浜",          c:"",                             co:"株式会社横浜国際平和会議場", t:"9:00〜12:00"},
+  {n:"パシフィックマークス川崎",  c:"THE TOBACCO KAWASAKI FIFTH",   co:"株式会社ザイマックス",   t:"7:00〜9:00"},
+  {n:"中野セントラルパーク",      c:"THE TOBACCO NAKANO",           co:"東京建物株式会社",      t:"9:00〜11:00", a:["中野セントラルパークサウス"]},
+  {n:"品川フロントビル",         c:"THE TOBACCO SHINAGAWA SECOND", co:"中日ビルマネジメント",   t:"23:30〜25:30"},
+  {n:"ss30",                 c:"THE TOBACCO SENDAI SECOND",    co:"",                    t:"4:30〜7:00"},
+  {n:"晴海トリトンY棟",         c:"",                             co:"株式会社ザイマックス",   t:"14:00〜16:00", a:["晴美トリトンY棟","晴海トリトン","晴美トリトン"]},
+  {n:"KANDA SQUARE",         c:"",                             co:"住商ビルマネージメント株式会社", t:"", a:["神田スクエア"]},
+  {n:"JRE芝二丁目大門ビル",     c:"",                             co:"東京海上日動ファシリティーズ株式会社", t:"土曜9:00〜20:00 / 平日19:00〜21:00"},
+  {n:"野村不動産西新宿共同ビル",  c:"",                             co:"野村不動産パートナーズ株式会社", t:"土日祝 日中", a:["西新宿共同ビル"]},
+  {n:"野村不動産天王洲ビル",     c:"THE TOBACCO TENNOZ ISLE",      co:"野村不動産パートナーズ株式会社", t:"10:00〜12:00"},
+  {n:"野村不動産広島ビル",       c:"",                             co:"野村不動産パートナーズ株式会社", t:"16:00〜18:00"},
+  {n:"ソコラ武蔵小金井クロス",    c:"THE TOBACCO MUSASHIKOGANEI",   co:"野村不動産パートナーズ株式会社", t:"9:00〜10:00", a:["ソコラ武蔵小金井"]},
+  {n:"MARINE&WALK YOKOHAMA", c:"",                            co:"株式会社プライムプレイス", t:"平日9:00〜11:00", a:["MARINE & WALK YOKOHAMA","マリンアンドウォーク"]},
+  {n:"たまプラーザテラス",       c:"",                             co:"株式会社東急モールズデベロップメント", t:""},
+  {n:"住友商事竹橋ビル",         c:"",                             co:"住商ビルマネージメント株式会社", t:""},
+  {n:"信濃町煉瓦館",           c:"",                             co:"太平ビルサービス株式会社", t:""},
+  {n:"BRANCH横浜南部市場",      c:"",                            co:"大和リース株式会社",     t:"20:00〜22:00", a:["横浜南部市場"]},
+  {n:"BRANCH仙台 west棟",     c:"",                            co:"大和リース株式会社",     t:"9:00〜10:00", a:["BRANCH仙台","仙台west棟"]},
+  {n:"NMF博多駅前ビル",        c:"",                             co:"株式会社ザイマックス九州", t:"9:00〜12:00"},
+  {n:"MIYASHITA PARK",       c:"",                            co:"三井不動産商業マネジメント", t:"23:00〜翌2:00", a:["宮下パーク","ミヤシタパーク"]},
+  {n:"ラ チッタ デッラ",        c:"",                             co:"株式会社チッタエンタテインメント", t:"8:00〜11:00", a:["ラチッタデッラ"]},
+  {n:"PMO EX本町",           c:"",                             co:"野村不動産パートナーズ株式会社", t:"19:00〜21:00", a:["PMOEX本町"]},
+  {n:"PMO梅田",              c:"",                             co:"野村不動産パートナーズ株式会社", t:"22:00〜24:00"},
+  {n:"東京ドームシティ",         c:"THE TOBACCO KORAKUEN",         co:"東京ドームグループ",     t:""},
+  {n:"MIテラス浜松",           c:"",                             co:"",                    t:""},
+];
+
+/* ── 自分側ドメイン（送信/受信の判定に使用） ─────────────────── */
+const OWN_DOMAIN = "cosodo.co.jp";
+
+/* ── 状態 ───────────────────────────────────────────────────── */
+let DB = null;
+let ui = { tab:"board", filter:"all", open:new Set(), pending:[], q:"",
+            picker:false, pickQ:"", pickSel:new Set(), undo:null, editProp:null };
+let saveTimer = null, pollTimer = null;
+
+/* ══ ユーティリティ ═══════════════════════════════════════════ */
+const ESC = {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"};
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ESC[c]);
+
+const pad2 = n => String(n).padStart(2, "0");
+const thisMonth = () => { const d = new Date(); return `${d.getFullYear()}-${pad2(d.getMonth()+1)}`; };
+const isMonthKey = m => /^\d{4}-(0[1-9]|1[0-2])$/.test(String(m || ""));
+const monthLabel = m => { const [y, mo] = String(m || "").split("-"); return `${esc(y)}年 ${Number(mo) || "?"}月`; };
+const addMonths = (m, n) => {
+  const [y, mo] = m.split("-").map(Number);
+  const d = new Date(y, mo - 1 + n, 1);
+  return `${d.getFullYear()}-${pad2(d.getMonth()+1)}`;
 };
-const APPROVAL_OPTS=["","未確認","確認中","OK"];
-const STATUS_OPTS=["","事前確認メール送付済み","作業届提出済み","作業届承認済み","作業完了"];
-const WARN_DAYS=3;
-const LS_KEY="june_cleaning_v4";
+const monthOf = iso => (iso || "").slice(0, 7);
 
-let state={}, filter="all", openCards=new Set(), saveTimer=null;
+/* 日付：ローカル時刻で厳密にパース（UTCずれ回避） */
+const parseDate = s => {
+  const m = /^(\d{4})-(\d{1,2})-(\d{1,2})$/.exec(String(s || "").trim());
+  if (!m) return null;
+  const d = new Date(+m[1], +m[2]-1, +m[3]);
+  if (isNaN(d.getTime())) return null;
+  /* 2026-02-31 のような存在しない日付を弾く（Dateは繰り上げてしまう） */
+  if (d.getFullYear() !== +m[1] || d.getMonth() !== +m[2]-1 || d.getDate() !== +m[3]) return null;
+  return d;
+};
+const todayD = () => { const d = new Date(); d.setHours(0,0,0,0); return d; };
+const toISO = d => `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+const diffDays = d => Math.round((d - todayD()) / 86400000);
+const shiftDays = (iso, n) => { const d = parseDate(iso); if (!d) return ""; d.setDate(d.getDate()+n); return toISO(d); };
+const WD = ["日","月","火","水","木","金","土"];
+const fmtJP = iso => { const d = parseDate(iso); return d ? `${d.getMonth()+1}月${d.getDate()}日（${WD[d.getDay()]}）` : ""; };
 
-const today=()=>{const d=new Date();d.setHours(0,0,0,0);return d;};
-const parseDate=s=>{if(!s)return null;const d=new Date(s);d.setHours(0,0,0,0);return isNaN(d)?null:d;};
-const diffDays=d=>Math.round((d-today())/86400000);
-function dlStat(ds){
-  const d=parseDate(ds);if(!d)return null;
-  const n=diffDays(d);
-  if(n<0)  return{cls:"dl-over",label:`${Math.abs(n)}日超過`};
-  if(n<=WARN_DAYS)return{cls:"dl-soon",label:`残${n}日`};
-  return{cls:"dl-safe",label:`残${n}日`};
+function dlStat(iso) {
+  const d = parseDate(iso); if (!d) return null;
+  const n = diffDays(d);
+  if (n < 0)  return { cls:"dl-over", label:`${Math.abs(n)}日超過`, n };
+  if (n === 0) return { cls:"dl-over", label:"本日", n };
+  if (n <= (DB?.settings?.warnDays ?? 3)) return { cls:"dl-soon", label:`残${n}日`, n };
+  return { cls:"dl-safe", label:`残${n}日`, n };
 }
-function lv(id){
-  const s=state[id]||{};
-  if(s.approval==="OK"||s.status==="作業届承認済み"||s.status==="作業完了")return"green";
-  if(s.status==="事前確認メール送付済み"||s.status==="作業届提出済み")return"amber";
-  if(s.approval==="未確認")return"red";
-  return"gray";
-}
-const LV_LBL={green:"確定",amber:"対応中",red:"要対応",gray:"未着手"};
-const LV_CLS={green:"gr",amber:"am",red:"rd",gray:"gy"};
 
-function setSyncing(on,msg){
-  const dot=document.getElementById("sdot"),lbl=document.getElementById("slabel");
-  if(dot)dot.className="sdot"+(on?" pulse":"");
-  if(lbl)lbl.textContent=msg;
+/* 照合用の正規化（NFKC・小文字・記号/空白除去） */
+function norm(s) {
+  return String(s || "").normalize("NFKC").toLowerCase()
+    .replace(/[\s　]+/g, "")
+    .replace(/[()（）「」【】\[\]・,,.。、~〜～\-ー_/／&＆'"]/g, "");
 }
-function scheduleSave(){clearTimeout(saveTimer);saveTimer=setTimeout(()=>{
-  try{localStorage.setItem(LS_KEY,JSON.stringify(state));}catch(e){}
-  setSyncing(false,"保存済み ✓");
-},400);}
 
-function load(){
-  setSyncing(true,"起動中");
-  if(location.hash&&location.hash.length>1){
-    try{
-      state=JSON.parse(decodeURIComponent(atob(location.hash.slice(1))));
-      history.replaceState(null,"",location.pathname);
-      setSyncing(false,"URLから読込 ✓");showToast("共有データを読み込みました ✓");
-      render();return;
-    }catch(e){}
+/* 内容全体からの安定ID（FNV-1a 32bit）。先頭一致による衝突を防ぐ */
+function hashId(str) {
+  let h = 0x811c9dc5;
+  const t = String(str);
+  for (let i = 0; i < t.length; i++) {
+    h ^= t.charCodeAt(i);
+    h = (h + (h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24)) >>> 0;
   }
-  try{
-    const saved=localStorage.getItem(LS_KEY);
-    if(saved){state=JSON.parse(saved);setSyncing(false,"保存済み ✓");render();return;}
-  }catch(e){}
-  state={};
-  BASE.forEach(r=>{const d=DEFAULTS[r.id]||{};
-    state[r.id]={approval:d.approval||"",status:d.status||"",time:r.time,submitDL:"",confirmDL:"",memo:""};
+  return "p" + h.toString(16).padStart(8, "0") + "-" + (t.length % 100000).toString(36);
+}
+
+/* base64url（+ / = を含まないので共有URLが壊れない） */
+const b64e = s => btoa(encodeURIComponent(s)).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+const b64d = s => decodeURIComponent(atob(String(s).replace(/-/g,"+").replace(/_/g,"/")));
+
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.classList.add("show");
+  clearTimeout(t._tm);
+  t._tm = setTimeout(() => t.classList.remove("show"), 3000);
+}
+function setSync(kind, msg) {
+  const dot = document.getElementById("sdot"), lbl = document.getElementById("slabel");
+  if (dot) dot.className = "sdot " + kind;
+  if (lbl) lbl.textContent = msg;
+}
+
+/* ══ データモデル ═════════════════════════════════════════════ */
+function newEntry(prop) {
+  return {
+    stage: 0,
+    workDate: "",           // YYYY-MM-DD 作業予定日（確定日）
+    workTime: prop?.timeNote || "",  // 作業時間帯（自由記述）
+    submitDL: "",           // 作業届 提出期限
+    confirmDL: "",          // 事前確認 回答期限
+    memo: "",
+    crew: "",               // 作業員・班
+    state: "active",        // active / postponed / cancelled
+    stateNote: "",          // 延期・中止の理由
+    updatedAt: "",          // 共有時のマージ判定に使用
+    sent: { precheck:"", propose:"", report:"" },  // 送信日 ISO
+    remindAt: "",           // 催促の送信日
+    approvedAt: "", doneAt: "",
+    autoNext: "",           // 次回予定月（YYYY-MM）
+    lastMail: "",           // 直近取込メールの識別子
+  };
+}
+function newProp(seed, id) {
+  return {
+    id, name: seed.n, code: seed.c || "", company: seed.co || "",
+    aliases: seed.a || [], timeNote: seed.t || "",
+    contacts: [],          // {name,email,tel} — Gmail連携/手入力で蓄積
+    cycle: 6,              // 清掃周期（月）
+    entryNote: "",         // 入館方法・受付・鍵・駐車場など
+    spots: "",             // 対象箇所（例：本館B1F・4F・8F）
+    supplies: "",          // 消耗品・資材の仕様
+    active: true,
+  };
+}
+function blankDB() {
+  return {
+    schema: SCHEMA,
+    current: thisMonth(),
+    props: SEED_PROPS.map((s, i) => newProp(s, i + 1)),
+    months: {},
+    log: [],
+    pending: [],
+    sync: { url:"", auto:true, intervalMin:5, lastPoll:0, lastOk:0, seen:{}, failCount:0, lastError:"" },
+    lastExportAt: 0,
+    settings: {
+      warnDays: 3,
+      leadPrecheck: 45,   // 作業日の N 日前までに事前確認
+      leadSubmit: 30,     // 作業日の N 日前までに作業届提出
+      leadReport: 3,      // 作業後 N 日以内に完了報告
+      autoApply: true,    // 高確度の解析結果を自動適用
+      senderName: "", senderCompany: "株式会社コソド",
+      senderTel: "", senderMail: "",
+    },
+  };
+}
+const propById = id => DB.props.find(p => p.id === id);
+function month(m) { if (!DB.months[m]) DB.months[m] = {}; return DB.months[m]; }
+function entry(m, id, create) {
+  if (!create) { const M = DB.months[m]; return (M && M[id]) || null; }
+  const M = month(m);
+  if (!M[id]) M[id] = newEntry(propById(id));
+  return M[id];
+}
+function touch(e) { if (e) e.updatedAt = new Date().toISOString(); }
+const cur = () => month(DB.current);              // 書き込み用（必要なら生成）
+const curRO = () => DB.months[DB.current] || {};  // 読み取り用（生成しない）
+function nextPropId() { return DB.props.reduce((a,p) => Math.max(a, p.id), 0) + 1; }
+
+function addLog(kind, text, src, propId) {
+  DB.log.unshift({ ts: new Date().toISOString(), kind, text, src: src || "man", propId: propId || null, month: DB.current });
+  if (DB.log.length > 600) DB.log.length = 600;
+}
+
+/* ── 保存 / 読込 ─────────────────────────────────────────────── */
+function save(silent) {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    try {
+      /* 未確認の解析結果も保存する（本文は容量のため切り詰める） */
+      DB.pending = ui.pending.slice(0, 30).map(r =>
+        Object.assign({}, r, { body: String(r.body || "").slice(0, 1800) }));
+      localStorage.setItem(LS_KEY, JSON.stringify(DB));
+      if (!silent) setSync("ok", "保存済み");
+    } catch (e) {
+      setSync("err", "保存できません");
+      showToast("保存できません（プライベートモード等）。「物件・連携」タブの『バックアップを書き出す』で保管してください");
+    }
+  }, 350);
+}
+
+/* 旧 june_cleaning_v4 からの移行 */
+function migrateLegacy(db) {
+  let raw = null;
+  try { raw = localStorage.getItem(LS_LEGACY); } catch (e) { return false; }
+  if (!raw) return false;
+  let old; try { old = JSON.parse(raw); } catch (e) { return false; }
+  if (!old || typeof old !== "object") return false;
+  const M = db.months["2026-06"] = db.months["2026-06"] || {};
+  /* 「OK」は承認そのものではなく「先方と話がついた」程度の意味なので 3（承認待ち）に落とし、
+     stage4（日程確定）は status の明示的な承認済からのみ立てる。 */
+  const A2S = { "OK":3, "確認中":2, "未確認":1, "NG":1 };
+  const S2S = { "事前確認メール送付済み":1, "作業届提出済み":3, "作業届承認済み":4, "作業完了":5 };
+  let n = 0;
+  Object.keys(old).forEach(k => {
+    const id = Number(k); const p = db.props.find(x => x.id === id); if (!p) return;
+    const o = old[k] || {};
+    const st = Math.max(A2S[o.approval] || 0, S2S[o.status] || 0);
+    if (!st && !o.memo && !o.submitDL && !o.confirmDL) return;
+    const e = M[id] = newEntry(p);
+    e.stage = st; e.workTime = o.time || p.timeNote || "";
+    e.submitDL = o.submitDL || ""; e.confirmDL = o.confirmDL || ""; e.memo = o.memo || "";
+    n++;
   });
-  setSyncing(false,"初期データ");render();
+  if (n) db.log.unshift({ ts:new Date().toISOString(), kind:"migrate",
+    text:`旧6月ボードから ${n}件を 2026-06 に移行しました`, src:"auto", propId:null, month:"2026-06" });
+  return n > 0;
 }
 
-function shareURL(){
-  try{
-    const encoded=btoa(encodeURIComponent(JSON.stringify(state)));
-    const url=location.href.split("#")[0]+"#"+encoded;
-    if(navigator.share){navigator.share({title:"6月定期清掃 管理ボード",url});}
-    else if(navigator.clipboard){navigator.clipboard.writeText(url);showToast("共有URLをコピーしました 📋");}
-    else{prompt("このURLをコピーして共有してください:",url);}
-  }catch(e){showToast("URLの生成に失敗しました");}
-}
-function importFromURL(){
-  const url=prompt("共有URLを貼り付けてください:");
-  if(!url)return;
-  try{
-    const hash=url.includes("#")?url.split("#")[1]:url.trim();
-    state=JSON.parse(decodeURIComponent(atob(hash)));
-    scheduleSave();render();showToast("データを読み込みました ✓");
-  }catch(e){showToast("URLが正しくありません");}
-}
-function showToast(msg){
-  const t=document.getElementById("toast");
-  t.textContent=msg;t.classList.add("show");
-  setTimeout(()=>t.classList.remove("show"),2800);
-}
-
-/* ── RENDER ── */
-function renderMetrics(){
-  const c={green:0,amber:0,red:0,gray:0};
-  BASE.forEach(r=>c[lv(r.id)]++);
-  document.getElementById("metrics").innerHTML=[
-    {k:"green",l:"確定"},
-    {k:"amber",l:"対応中"},
-    {k:"red",  l:"要対応"},
-    {k:"gray", l:"未着手"},
-  ].map(m=>`<div class="metric ${LV_CLS[m.k]}">
-    <div class="metric-num" style="color:var(--c-${m.k})">${c[m.k]}</div>
-    <div class="metric-lbl">${m.l}</div>
-  </div>`).join("");
-}
-
-function renderAlerts(){
-  const items=[];
-  BASE.forEach(row=>{
-    const s=state[row.id]||{};
-    const sd=dlStat(s.submitDL),cd=dlStat(s.confirmDL);
-    if(sd&&(sd.cls==="dl-over"||sd.cls==="dl-soon"))
-      items.push({cls:sd.cls==="dl-over"?"urg":"wrn",
-        icon:sd.cls==="dl-over"?"🚨":"⏰",
-        msg:`【${row.name}】提出期限 ${s.submitDL}（${sd.label}）`});
-    if(cd&&(cd.cls==="dl-over"||cd.cls==="dl-soon"))
-      items.push({cls:cd.cls==="dl-over"?"urg":"wrn",
-        icon:cd.cls==="dl-over"?"🚨":"⏰",
-        msg:`【${row.name}】確認期限 ${s.confirmDL}（${cd.label}）`});
+/* 保存データと物件マスタの整合（新規物件が消えない） */
+function reconcile(db) {
+  if (!Array.isArray(db.props)) db.props = [];
+  /* 物件名でもコードでも既存判定する。リネーム後にシードが復活して
+     同一コードの物件が二重登録されるのを防ぐ。 */
+  const haveName = new Set(db.props.map(p => norm(p.name)));
+  const haveCode = new Set(db.props.filter(p => p.code).map(p => norm(p.code)));
+  SEED_PROPS.forEach(sd => {
+    if (haveName.has(norm(sd.n))) return;
+    if (sd.c && haveCode.has(norm(sd.c))) return;
+    db.props.push(newProp(sd, nextPropIdOf(db)));
   });
-  document.getElementById("alerts").innerHTML=items.map(a=>
-    `<div class="alert ${a.cls}"><span>${a.icon}</span><span>${a.msg}</span></div>`
-  ).join("");
+  /* id は必ず数値。文字列だと onclick 属性を脱出できてしまう */
+  db.props = db.props.filter(p => p && typeof p.name === "string")
+    .map((p, i) => Object.assign(p, { id: Number.isInteger(Number(p.id)) && Number(p.id) > 0 ? Number(p.id) : i + 1 }));
+  db.props.forEach(p => {
+    p.aliases = Array.isArray(p.aliases) ? p.aliases : [];
+    p.contacts = Array.isArray(p.contacts) ? p.contacts : [];
+    p.cycle = Math.max(1, Math.min(36, Number(p.cycle) || 6));
+    if (p.active === undefined) p.active = true;
+    ["code","company","entryNote","spots","supplies"].forEach(k => {
+      if (typeof p[k] !== "string") p[k] = "";
+    });
+    p.contacts = p.contacts.filter(c => c && typeof c.email === "string")
+      .map(c => ({ name: String(c.name || c.email.split("@")[0]), email: c.email,
+                   tel: String(c.tel || ""), active: c.active !== false, seenAt: c.seenAt || "" }));
+  });
+  db.settings = Object.assign(blankDB().settings, db.settings || {});
+  db.sync = Object.assign(blankDB().sync, db.sync || {});
+  if (!db.sync.seen || typeof db.sync.seen !== "object") db.sync.seen = {};
+  /* 90日より古い取込記録を捨てる。localStorage の上限に達して保存が止まるのを防ぐ */
+  const cut = Date.now() - 90 * 86400000;
+  const pruned = {};
+  Object.keys(db.sync.seen).forEach(k => { if (Number(db.sync.seen[k]) > cut) pruned[k] = db.sync.seen[k]; });
+  db.sync.seen = pruned;
+  db.months = db.months && typeof db.months === "object" ? db.months : {};
+  db.log = Array.isArray(db.log) ? db.log : [];
+  db.pending = Array.isArray(db.pending) ? db.pending : [];
+  Object.keys(db.months).forEach(m => {
+    const M = db.months[m];
+    Object.keys(M).forEach(id => {
+      const e = M[id] = Object.assign(newEntry(null), M[id]);
+      const st = Number(e.stage);
+      /* 範囲外の値は 0 に戻す。6 に切り上げると「完了」で固定され復旧できない */
+      e.stage = (Number.isInteger(st) && st >= 0 && st <= 6) ? st : 0;
+      e.sent = Object.assign({ precheck:"", propose:"", report:"" }, e.sent || {});
+      if (e.state !== "postponed" && e.state !== "cancelled") e.state = "active";
+    });
+  });
+  return db;
+}
+function nextPropIdOf(db) { return db.props.reduce((a,p) => Math.max(a, p.id || 0), 0) + 1; }
+
+async function load() {
+  setSync("busy", "読込中");
+  let db = null, raw = null, broken = false;
+  try { raw = localStorage.getItem(LS_KEY); } catch (e) { raw = null; }
+  if (raw) {
+    try { db = JSON.parse(raw); }
+    catch (e) { broken = true; }
+  }
+  /* 壊れていたら白紙で上書きせず、原本を退避してから確認する */
+  if (broken) {
+    try { localStorage.setItem(LS_KEY + "_broken_" + Date.now(), raw); } catch (e) {}
+    if (!confirm("保存データを読み込めませんでした。\n原本は退避しました（削除していません）。\n\n白紙の状態で開始しますか？\n「キャンセル」を選ぶとデータを保護したまま停止します。")) {
+      setSync("err", "停止中（データ保護）");
+      throw new Error("保存データが壊れています。復旧のため起動を中止しました。");
+    }
+  }
+  if (!db || db.schema !== SCHEMA) {
+    const fresh = blankDB();
+    if (db && db.props) {   // 将来のスキーマ変更に備えた保守的マージ
+      try { db = reconcile(Object.assign(fresh, db, { schema: SCHEMA })); }
+      catch (e) {
+        try { localStorage.setItem(LS_KEY + "_migfail_" + Date.now(), raw || ""); } catch (_) {}
+        throw new Error("データの移行に失敗しました。原本は退避済みです。");
+      }
+    } else {
+      db = fresh;
+      migrateLegacy(db);
+    }
+  }
+  DB = reconcile(db);
+
+  /* 共有URL（#）からの読込 */
+  if (location.hash && location.hash.length > 1) {
+    try {
+      const pack = await unpackShare(location.hash.slice(1));
+      if (pack && pack.months && typeof pack.months === "object") {
+        const res = mergeShare(pack);
+        if (isMonthKey(pack.current)) DB.current = pack.current;   // 任意文字列を弾く
+        DB = reconcile(DB);
+        addLog("import", `共有URLから取込：${res.merged}件を反映／${res.skipped}件は古いためスキップ`
+          + (res.unknown ? `／${res.unknown}件は物件を特定できず未取込` : ""), "man");
+        showToast(`共有データを読み込みました（${res.merged}件反映${res.skipped?`・${res.skipped}件スキップ`:""}）`);
+      } else throw new Error("shape");
+    } catch (e) {
+      showToast("共有URLの読込に失敗しました（リンクが途中で切れている可能性があります）");
+    }
+    history.replaceState(null, "", location.pathname + location.search);
+  }
+
+  ui.pending = Array.isArray(DB.pending) ? DB.pending : [];
+  rollForward();
+  save(true);
+  setSync("ok", "ローカル保存");
+  renderAll();
+  startPolling();
 }
 
-function renderFilters(){
-  const tabs=[
-    {k:"all",l:"すべて"},
-    {k:"red",l:"🔴 要対応"},
-    {k:"amber",l:"🟡 対応中"},
-    {k:"green",l:"🟢 確定"},
-    {k:"gray",l:"⬜ 未着手"},
-  ];
-  document.getElementById("filters").innerHTML=tabs.map(t=>
-    `<button class="fbtn${filter===t.k?" on":""}" onclick="setFilter('${t.k}')">${t.l}</button>`
-  ).join("");
+/* ── 6ヶ月サイクルの自動繰越 ───────────────────────────────────
+   完了(stage>=5)した案件から、周期後の月へ次回エントリを自動生成。
+   すでに存在する場合は触らない（冪等）。 */
+function rollForward() {
+  let made = 0;
+  Object.keys(DB.months).forEach(m => {
+    const M = DB.months[m];
+    Object.keys(M).forEach(idStr => {
+      const id = Number(idStr), e = M[idStr];
+      if (e.stage < 5) return;
+      if (e._noRoll) return;                       // ユーザーが繰越を削除した場合は再生成しない
+      if (e.state === "cancelled") return;         // 中止案件からは繰越しない
+      const p = propById(id); if (!p) return;
+      let nm = e.autoNext;
+      /* autoNext が空・不正・過去を指す場合は 周期から算出し直す */
+      if (!isMonthKey(nm) || nm <= m) nm = addMonths(e.workDate ? monthOf(e.workDate) : m, p.cycle);
+      if (!isMonthKey(nm) || nm <= m) return;
+      const NM = month(nm);
+      if (NM[id]) return;
+      NM[id] = newEntry(p);
+      made++;
+      addLog("cycle", `${p.name}：${monthLabel(m)}の完了を受けて ${monthLabel(nm)} に次回案件を自動作成`, "auto", id);
+    });
+  });
+  /* 期限の自動算出（作業日が入っていて期限が空なら埋める） */
+  Object.keys(DB.months).forEach(m => {
+    const M = DB.months[m];
+    Object.keys(M).forEach(idStr => autoDeadlines(M[idStr]));
+  });
+  if (made) save(true);
+  return made;
+}
+function autoDeadlines(e) {
+  if (!e || !e.workDate) return;
+  const s = DB.settings;
+  if (!e.confirmDL) e.confirmDL = shiftDays(e.workDate, -s.leadPrecheck);
+  if (!e.submitDL)  e.submitDL  = shiftDays(e.workDate, -s.leadSubmit);
 }
 
-function renderCards(){
-  const rows=filter==="all"?BASE:BASE.filter(r=>lv(r.id)===filter);
-  document.getElementById("cards").innerHTML=rows.map(row=>{
-    const s=state[row.id]||{approval:"",status:"",time:row.time,submitDL:"",confirmDL:"",memo:""};
-    const l=lv(row.id);
-    const sd=dlStat(s.submitDL),cd=dlStat(s.confirmDL);
-    const isOpen=openCards.has(row.id);
-    const aOpts=APPROVAL_OPTS.map(o=>`<option value="${o}"${s.approval===o?" selected":""}>${o||"未設定"}</option>`).join("");
-    const stOpts=STATUS_OPTS.map(o=>`<option value="${o}"${s.status===o?" selected":""}>${o||"未設定"}</option>`).join("");
-    const sdTag=sd?`<div class="dl-tag ${sd.cls}">📅 提出 ${s.submitDL} · ${sd.label}</div>`:"";
-    const cdTag=cd?`<div class="dl-tag ${cd.cls}">✅ 確認 ${s.confirmDL} · ${cd.label}</div>`:"";
-    return `<div class="card lv-${l}" id="card-${row.id}">
-      <div class="card-hdr" onclick="toggleCard(${row.id})">
-        <div style="min-width:0">
-          <div class="prop-name">${row.name}</div>
-          ${row.sub?`<div class="prop-sub">${row.sub}</div>`:""}
-          ${s.time&&s.time!=="—"?`<div class="prop-time">🕐 ${s.time}</div>`:""}
-          ${sd||cd?`<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:5px">${sdTag}${cdTag}</div>`:""}
-        </div>
-        <div class="card-right">
-          <span class="badge ${LV_CLS[l]}">${LV_LBL[l]}</span>
-          <span class="chevron${isOpen?" open":""}">▼</span>
-        </div>
-      </div>
-      <div class="card-body${isOpen?" open":""}" id="body-${row.id}">
-        <div class="divider"></div>
-        <div class="field">
-          <div class="flabel">作業時間帯</div>
-          <input class="finput" type="text"
-            value="${(s.time||"").replace(/"/g,"&quot;")}"
-            placeholder="例: 21:00〜9:00（6/15土）"
-            oninput="upd(${row.id},'time',this.value)">
-        </div>
-        <div class="row2">
-          <div class="field">
-            <div class="flabel">承認状況</div>
-            <div class="sel-wrap"><select class="finput" onchange="upd(${row.id},'approval',this.value)">${aOpts}</select></div>
-          </div>
-          <div class="field">
-            <div class="flabel">ステータス</div>
-            <div class="sel-wrap"><select class="finput" onchange="upd(${row.id},'status',this.value)">${stOpts}</select></div>
-          </div>
-        </div>
-        <div class="row2">
-          <div class="field">
-            <div class="flabel">📅 提出期限</div>
-            <input class="finput" type="date" value="${s.submitDL||""}" onchange="upd(${row.id},'submitDL',this.value)">
-            ${sd?`<div class="dl-tag ${sd.cls}">${sd.label}</div>`:""}
-          </div>
-          <div class="field">
-            <div class="flabel">✅ 確認期限</div>
-            <input class="finput" type="date" value="${s.confirmDL||""}" onchange="upd(${row.id},'confirmDL',this.value)">
-            ${cd?`<div class="dl-tag ${cd.cls}">${cd.label}</div>`:""}
-          </div>
-        </div>
-        <div class="field">
-          <div class="flabel">メモ</div>
-          <input class="finput" type="text"
-            value="${(s.memo||"").replace(/"/g,"&quot;")}"
-            placeholder="担当者・備考など..."
-            oninput="upd(${row.id},'memo',this.value)">
-        </div>
-      </div>
-    </div>`;
+/* ══ メール解析エンジン ═══════════════════════════════════════
+   実際の往来メール（事前確認 → 条件回答 → 日程打診/作業届 →
+   承認 → 完了報告）の定型文から工程・日程・次回予定を抽出する。 */
+
+/* 引用履歴を落とす（過去の日程を誤検出しないため必須） */
+function stripQuote(body) {
+  const lines = String(body || "").replace(/\r/g, "").split("\n");
+  const out = [];
+  for (const l of lines) {
+    if (/^\s*>/.test(l)) break;
+    if (/^\s*\d{4}\s*年\s*\d{1,2}\s*月\s*\d{1,2}\s*日\s*(?:[（(][日月火水木金土][)）])?\s*\d{1,2}\s*[:：]\s*\d{2}/.test(l)) break;
+    if (/^\s*\**\s*(From|差出人|Sent|送信日時|元のメッセージ|Original Message)\s*\**\s*[:：]/.test(l)) break;
+    if (/^-{5,}\s*(Original Message|元のメッセージ)/.test(l)) break;
+    if (/^\s*On\s.+\swrote:\s*$/.test(l)) break;
+    out.push(l);
+  }
+  /* 署名以降を落とす。sig は「署名の開始位置」なので 0 より大きければ切る。
+     短文返信（「承知いたしました」＋署名）で署名の建物名を誤って拾わないために重要。 */
+  const j = out.join("\n");
+  const sig = j.search(/(\n[＿_]{5,}|\n[-=]{2,}\s*\n\s*株式会社|\n\*{10,}|\n[-・=]{10,})/);
+  return sig > 0 ? j.slice(0, sig) : j;
+}
+
+/* 貼り付けテキストを複数メールに分割 + ヘッダ抽出 */
+function splitMails(text) {
+  const t = String(text || "").replace(/\r/g, "");
+  const hdrRx = /^[ \t]*\**[ \t]*(件名|Subject)[ \t]*\**[ \t]*[:：]/gm;
+  const idx = [];
+  let m; while ((m = hdrRx.exec(t))) idx.push(m.index);
+  let chunks;
+  if (idx.length >= 2) {
+    chunks = idx.map((s, i) => t.slice(s, idx[i+1] ?? t.length));
+    if (idx[0] > 30) chunks.unshift(t.slice(0, idx[0]));
+  } else {
+    chunks = [t];
+  }
+  return chunks.map(c => c.trim()).filter(c => c.length > 12).map(parseHeaders);
+}
+function parseHeaders(chunk) {
+  const grab = re => { const m = re.exec(chunk); return m ? m[m.length-1].trim() : ""; };
+  const subject = grab(/^[ \t]*\**[ \t]*(?:件名|Subject)[ \t]*\**[ \t]*[:：][ \t]*(.*)$/m);
+  const from    = grab(/^[ \t]*\**[ \t]*(?:差出人|From|送信者)[ \t]*\**[ \t]*[:：][ \t]*(.*)$/m);
+  const to      = grab(/^[ \t]*\**[ \t]*(?:宛先|To)[ \t]*\**[ \t]*[:：][ \t]*(.*)$/m);
+  const cc      = grab(/^[ \t]*\**[ \t]*(?:CC|Cc)[ \t]*\**[ \t]*[:：][ \t]*(.*)$/m);
+  const dateRaw = grab(/^[ \t]*\**[ \t]*(?:日付|Date|送信日時)[ \t]*\**[ \t]*[:：][ \t]*(.*)$/m);
+  let body = chunk;
+  const firstBlank = chunk.search(/\n[ \t]*\n/);
+  if (subject && firstBlank > 0) body = chunk.slice(firstBlank);
+  return { subject, from, to, cc, date: dateRaw, body, raw: chunk };
+}
+
+/* ── 物件照合 ─────────────────────────────────────────────── */
+function matchProp(subject, body, from) {
+  const hay = norm(subject + " " + body);
+  const haySubj = norm(subject);
+  let best = null;
+  DB.props.forEach(p => {
+    /* 1) THE TOBACCO コード（最も強い手掛かり） */
+    if (p.code) {
+      const c = norm(p.code);
+      if (c.length > 6 && hay.includes(c)) {
+        /* 長いコードを優先する。THE TOBACCO KINSHICHO ⊂ ...KINSHICHO23、
+           THE TOBACCO SHIBUYA ⊂ ...SHIBUYA2~5 のような包含関係で
+           配列順に依存して取り違えるのを防ぐ。 */
+        const s = 1.0 + Math.min(c.length, 40) / 1000 + (haySubj.includes(c) ? .02 : 0);
+        if (!best || s > best.score) best = { p, score: s, by: "コード" };
+        return;
+      }
+    }
+    /* 2) 物件名 / 別名（長い一致を優先） */
+    const cands = [p.name, ...(p.aliases || [])];
+    for (const cand of cands) {
+      const c = norm(cand);
+      if (c.length < 3) continue;
+      if (hay.includes(c)) {
+        const s = 0.60 + Math.min(c.length, 20) / 50 + (haySubj.includes(c) ? .12 : 0);
+        if (!best || s > best.score) best = { p, score: Math.min(s, 0.99), by: cand === p.name ? "物件名" : "別名" };
+      }
+    }
+  });
+  /* 3) 既知の担当者アドレスからの補強 */
+  const mail = (/[\w.+-]+@[\w.-]+\.\w+/.exec(from || "") || [""])[0].toLowerCase();
+  if (mail) {
+    const byMail = DB.props.find(p => (p.contacts || []).some(c => (c.email || "").toLowerCase() === mail));
+    if (byMail) {
+      /* 同じ担当者が複数物件を担当することが多い（パルコ8物件・野村5物件など）ため、
+         本文・件名の一致を上書きしない。一致していれば加点のみ。 */
+      if (!best) best = { p: byMail, score: 0.75, by: "担当者アドレス" };
+      else if (best.p.id === byMail.id) best.score = Math.min(best.score + 0.05, 1.0);
+    }
+  }
+  return best;
+}
+
+/* ── 日程抽出 ─────────────────────────────────────────────── */
+const RX_DATE = /(\d{1,2})\s*月\s*(\d{1,2})\s*日/g;
+const RX_SPAN = /(\d{1,2})\s*[:：]\s*(\d{2})\s*[~〜～\-–ー]{1,2}\s*(?:翌日?\s*|\d{1,2}\s*月\s*\d{1,2}\s*日\s*[（(]?[日月火水木金土]?[)）]?\s*)?(\d{1,2})\s*[:：]\s*(\d{2})/;
+
+/* 「2026年8月7日(金) 16:22」のような和文日付も基準日として解釈する */
+function refDateOf(raw) {
+  const t = String(raw || "");
+  const m = /(\d{4})\s*年\s*(\d{1,2})\s*月\s*(\d{1,2})\s*日/.exec(t);
+  if (m) { const d = new Date(+m[1], +m[2]-1, +m[3]); if (!isNaN(d.getTime())) return d; }
+  const d2 = new Date(t);
+  return isNaN(d2.getTime()) ? new Date() : d2;
+}
+function inferYear(mon, ref) {
+  const ry = ref.getFullYear(), rm = ref.getMonth() + 1;
+  let y = ry, d = mon - rm;
+  /* 6ヶ月周期の業務なので「ちょうど6ヶ月差」は未来側に寄せる */
+  if (d <= -6) y = ry + 1;
+  else if (d > 6) y = ry - 1;
+  return y;
+}
+function extractDates(text, ref) {
+  const found = [], seen = new Set();
+  let m, consumedUntil = -1;
+  RX_DATE.lastIndex = 0;
+  while ((m = RX_DATE.exec(text))) {
+    /* 「8月29日（土）23:00~8月30日（日）5:00」の後半日付は
+       前半の時間帯表記に含まれるため、独立した候補日として数えない */
+    if (m.index < consumedUntil) continue;
+    const mo = +m[1], da = +m[2];
+    if (mo < 1 || mo > 12 || da < 1 || da > 31) continue;
+    const y = inferYear(mo, ref);
+    const d = new Date(y, mo - 1, da);
+    if (d.getMonth() !== mo - 1) continue;      // 2月31日 等を排除
+    /* 直後34文字以内の時間帯を紐付け */
+    const tailStart = m.index + m[0].length;
+    const tail = text.slice(tailStart, tailStart + 34);
+    const sp = RX_SPAN.exec(tail);
+    if (sp) consumedUntil = tailStart + sp.index + sp[0].length;
+    const iso = toISO(d);
+    if (seen.has(iso)) continue;
+    seen.add(iso);
+    found.push({ iso, time: sp ? `${+sp[1]}:${sp[2]}〜${+sp[3]}:${sp[4]}` : "" });
+  }
+  return found;
+}
+function extractNextMonth(text, ref) {
+  let m = /次回[^。\n]{0,40}?[【]?\s*(\d{4})\s*年[^0-9]{0,4}(\d{1,2})\s*月/.exec(text);
+  if (m) return `${m[1]}-${pad2(+m[2])}`;
+  m = /次回[^。\n]{0,40}?[【]?\s*(\d{1,2})\s*月/.exec(text);
+  if (m) {
+    /* 「次回」は必ず未来。年の記載がなければメール送信月より後になるよう繰り上げる */
+    const mo = +m[1];
+    if (mo < 1 || mo > 12) return "";
+    const y = ref.getFullYear() + (mo <= ref.getMonth() + 1 ? 1 : 0);
+    return `${y}-${pad2(mo)}`;
+  }
+  return "";
+}
+
+/* ── 工程判定 ─────────────────────────────────────────────── */
+const SIG_OUT = [
+  { st:6, re:/予定通り\s*(?:作業を)?実施(?:しました|させていただきました|いたしました)|作業完了報告書|完了報告書を?添付/ , why:"完了報告の送付" },
+  { st:3, re:/下記日程で(?:の実施を希望|実施)|下記日程にて|下記スケジュール|作業日時が確定|実施日時が確定|作業日程の調整ができ|日程での実施を希望/, why:"日程打診・作業届提出" },
+  { st:3, re:/作業届を?(?:添付|記入|提出)|作業申請書|工事申請書/, why:"作業届の提出" },
+  { st:1, re:/【確認事項】|事前に何点かご確認|来月頃に定期美化清掃|定期美化清掃の実施を予定/, why:"事前確認メールの送付" },
+];
+const SIG_IN = [
+  /* 明示的な承認表現。単独でも承認と判定してよい */
+  { st:4, re:/申請承認済|承認済(?:みです)?|受理(?:して)?(?:頂き|いただき)|管理組合に受理|作業届の?(?:ご)?提出ありがとう|申請書もご提出いただき/, why:"作業届の承認" },
+  /* 「承知しました」等は日本語メールの常套句。日付を伴わなければ承認と見なさない */
+  { st:4, needDate:true, fallback:2,
+    re:/(?:にて)?承知(?:いた)?しました|問題ございません|問題ありません|で結構です|了承(?:いた)?しました|内容確認(?:致|いた)しました/,
+    why:"日程の承諾（日付あり）" },
+  { st:2, re:/清掃の実施可能時間|実施可能時間帯|望ましいです|下記日程の中から|ご調整は可能でしょうか|作業届に記入|申請書を(?:お送り|送付)|提出をお願い|リンクをいただけ/, why:"実施条件の回答" },
+];
+
+function parseMail(mail) {
+  const body = stripQuote(mail.body);
+  const text = (mail.subject || "") + "\n" + body;
+  const ref = refDateOf(mail.date);
+
+  /* From のアドレス部だけで判定する（表示名によるなりすましを防ぐ） */
+  const addr = (/<([^>]+)>/.exec(mail.from || "") || [null, mail.from || ""])[1].trim().toLowerCase();
+  const ownRx = new RegExp("@([\\w-]+\\.)*" + OWN_DOMAIN.replace(/\./g, "\\.") + "$", "i");
+  const hasHeader = !!(mail.subject || mail.from);
+  const outbound = ownRx.test(addr) || (!mail.from && /コソドの|株式会社コソドの/.test(body));
+  const dir = outbound ? "out" : "in";
+
+  /* 定期清掃関連メールかどうか */
+  const relevant = /定期(?:美化)?清掃|喫煙(?:室|所)|作業届|作業完了報告|清掃作業|作業申請書/.test(text);
+
+  const pm = matchProp(mail.subject, body, mail.from);
+  const dates = extractDates(body, ref);
+  const sigs = dir === "out" ? SIG_OUT : SIG_IN;
+  let stage = -1, why = "";
+  for (const sg of sigs) {
+    if (!sg.re.test(text)) continue;
+    /* 日付を伴わない相槌は一段下の工程として扱う */
+    const st = (sg.needDate && dates.length === 0) ? sg.fallback : sg.st;
+    if (st > stage) { stage = st; why = (sg.needDate && dates.length === 0) ? "返信あり（承認は未確認）" : sg.why; }
+  }
+
+  /* 「承認されておりません」「見送り」「延期」等があれば承認判定を取り下げる */
+  if (stage >= 4 && /(?:承認|了承)[^。\n]{0,8}(?:されて|でき)?(?:ておりま|おりま|ま)せん|見送り|中止|延期|再調整|difficult/.test(text)) {
+    stage = Math.min(stage, 2); why = "要確認（否定・延期の表現あり）";
+  }
+  const nextMonth = dir === "out" && stage === 6 ? extractNextMonth(body, ref) : "";
+
+  /* 担当者情報（受信のみ・自社ドメイン以外） */
+  const contact = (() => {
+    if (dir !== "in") return null;
+    const em = (/[\w.+-]+@[\w.-]+\.\w+/.exec(mail.from || "") || [""])[0];
+    if (!em || em.toLowerCase().includes(OWN_DOMAIN)) return null;
+    let nm = (mail.from || "").replace(/<[^>]*>/g, "").replace(/["']/g, "").trim();
+    if (!nm || nm.includes("@")) nm = em.split("@")[0];
+    return { name: nm, email: em, tel: "" };
+  })();
+
+  /* 確度 */
+  let conf = 0;
+  if (pm && relevant) {
+    conf = Math.min(pm.score, 1) * (stage >= 0 ? 1 : 0.45);
+    if (dates.length > 2) conf *= 0.8;   // 候補日の羅列は確定情報ではない
+    if (!hasHeader) conf *= 0.5;         // 件名・差出人が無いと送受信の向きが確定できない
+  }
+  return {
+    id: mail.id || hashId((mail.subject || "") + "\u0000" + (mail.date || "") + "\u0000" + body),
+    dir, relevant, stage, why, dates, nextMonth, contact, hasHeader,
+    dateISO: isNaN(ref.getTime()) ? "" : toISO(ref),
+    propId: pm ? pm.p.id : null, propName: pm ? pm.p.name : "", matchBy: pm ? pm.by : "",
+    conf: Math.round(conf * 100) / 100,
+    subject: mail.subject || "(件名なし)", from: mail.from || "", date: mail.date || "",
+    body, snippet: body.replace(/\s+/g, " ").trim().slice(0, 150),
+  };
+}
+
+/* ── 解析結果 → エントリへの差分 ─────────────────────────── */
+function planChanges(r) {
+  const ch = [];
+  if (!r.propId || r.stage < 0) return ch;
+  const p = propById(r.propId);
+  /* 対象月：確定日があればその月、なければ現在表示月 */
+  const useDate = r.dates.length === 1 ? r.dates[0] : null;
+  /* 対象月の決定：①確定日の月 → ②その物件の未完了案件が既にある月 → ③表示月。
+     バックグラウンド取込のとき「どの月を開いていたか」で格納先が変わるのを防ぐ。 */
+  const tm = useDate ? monthOf(useDate.iso)
+    : (Object.keys(DB.months).sort().find(m => DB.months[m][r.propId] && DB.months[m][r.propId].stage < 6)
+       || DB.current);
+  const e = entry(tm, r.propId, false) || newEntry(p);
+  const exists = !!entry(tm, r.propId, false);
+
+  if (!exists) ch.push({ f:"_new", m:tm, from:"", to:`${monthLabel(tm)} に案件を新規作成` });
+  if (r.stage > e.stage) ch.push({ f:"stage", m:tm, from:stageOf(e.stage).label, to:stageOf(r.stage).label, v:r.stage });
+  /* 確定済みの作業日を、現状より前の工程のメール（古い打診・完了報告の回想）で書き換えない */
+  const dateLocked = !!e.workDate && (r.stage >= 6 || r.stage < e.stage);
+  if (useDate && useDate.iso !== e.workDate && !dateLocked)
+    ch.push({ f:"workDate", m:tm, from:e.workDate || "未定", to:useDate.iso, v:useDate.iso });
+  if (useDate && useDate.time && useDate.time !== e.workTime) ch.push({ f:"workTime", m:tm, from:e.workTime || "—", to:useDate.time, v:useDate.time });
+  if (r.nextMonth && r.nextMonth !== e.autoNext) ch.push({ f:"autoNext", m:tm, from:e.autoNext || "—", to:r.nextMonth, v:r.nextMonth });
+  if (r.contact) {
+    const has = (p.contacts || []).some(c => (c.email || "").toLowerCase() === r.contact.email.toLowerCase());
+    if (!has) ch.push({ f:"_contact", m:tm, from:"", to:`担当者 ${r.contact.name} <${r.contact.email}> を登録`, v:r.contact });
+  }
+  return ch.map(c => Object.assign(c, { month: tm }));
+}
+
+function applyResult(r, src) {
+  const ch = planChanges(r);
+  if (!ch.length) return 0;
+  const tm = ch[0].month;
+  const e = entry(tm, r.propId, true);
+  const p = propById(r.propId);
+  ch.forEach(c => {
+    if (c.f === "_new") return;
+    if (c.f === "_contact") { p.contacts.push(c.v); return; }
+    e[c.f] = c.v;
+    if (c.f === "stage") {
+      const mailDay = r.dateISO || toISO(todayD());   // ローカル日付。生ヘッダ文字列を入れない
+      if (c.v >= 4 && !e.approvedAt) e.approvedAt = mailDay;
+      if (c.v >= 5 && !e.doneAt)     e.doneAt     = e.workDate || mailDay;
+    }
+  });
+  if (!e.workTime) e.workTime = p.timeNote || "";
+  e.lastMail = r.id;
+  e.lastMailDate = r.dateISO || "";
+  touch(e);
+  autoDeadlines(e);
+  DB.sync.seen[r.id] = Date.now();
+  addLog("mail", `${p.name}：${r.dir === "in" ? "受信" : "送信"}メールから${ch.filter(c=>c.f!=="_new"&&c.f!=="_contact").map(c=>c.f==="stage"?`工程→${stageOf(c.v).label}`:c.f==="workDate"?`作業日→${c.to}`:c.f==="workTime"?`時間帯→${c.to}`:`次回→${c.to}`).join(" / ") || "情報"}を自動反映（${r.why||"照合"}・確度${Math.round(r.conf*100)}%）`, src || "mail", r.propId);
+  rollForward();
+  save();
+  return ch.length;
+}
+
+/* ══ 描画 ═════════════════════════════════════════════════════ */
+const TABS = [
+  { k:"board",  l:"ボード" },
+  { k:"inbox",  l:"受信取込" },
+  { k:"outbox", l:"送信" },
+  { k:"log",    l:"ログ" },
+  { k:"setup",  l:"物件・連携" },
+];
+function renderTabs() {
+  const pend = ui.pending.filter(r => !r.applied).length;
+  const el = document.getElementById("tabs");
+  el.setAttribute("role", "tablist");
+  el.innerHTML = TABS.map(t =>
+    `<button class="tab${ui.tab===t.k?" on":""}" role="tab" aria-selected="${ui.tab===t.k}"
+       aria-controls="pane-${t.k}" onclick="setTab('${t.k}')">${esc(t.l)}${
+      t.k==="inbox" && pend ? `<span class="cnt" aria-label="未確認 ${pend}件">${pend}</span>` : ""}</button>`).join("");
+}
+function renderMonthSel() {
+  const set = new Set(Object.keys(DB.months));
+  set.add(DB.current); set.add(thisMonth());
+  for (let i = -3; i <= 9; i++) set.add(addMonths(thisMonth(), i));
+  const arr = [...set].filter(m => /^\d{4}-\d{2}$/.test(m)).sort();
+  const sel = document.getElementById("msel");
+  sel.innerHTML = arr.map(m => {
+    const n = Object.keys(DB.months[m] || {}).length;
+    return `<option value="${m}"${m===DB.current?" selected":""}>${monthLabel(m)}${n?`（${n}件）`:""}</option>`;
   }).join("");
 }
 
-function render(){renderMetrics();renderAlerts();renderFilters();renderCards();}
+/* 表示レベル：工程 + 期限の緊急度。メトリクスとフィルタが必ず一致するよう
+   ひとつの案件はちょうど1つのレベルに属する。 */
+function levelOf(id) {
+  const e = entry(DB.current, id, false);
+  if (!e) return "gray";
+  const s = DB.settings;
+  if (e.state === "cancelled") return "gray";
+  if (e.stage >= 6) return "green";
+  /* 矛盾状態：日程確定なのに作業日が空。放置すると全アラートから漏れる */
+  if (e.stage === 4 && !e.workDate) return "red";
+  if (e.state === "postponed") return "amber";
+  if (e.stage === 5) {                       // 作業済み・完了報告が未送付
+    const base = e.doneAt || e.workDate;
+    return (base && diffDays(parseDate(base)) < -s.leadReport) ? "red" : "amber";
+  }
+  if (e.stage === 4) {                       // 日程確定
+    if (diffDays(parseDate(endDateOf(e))) < 0) return "red";   // 作業日を過ぎて未完了
+    return "blue";
+  }
+  /* 未承認のまま作業日が近い */
+  if (e.stage < 4 && e.workDate && diffDays(parseDate(e.workDate)) <= 7) return "red";
+  const cd = e.stage < 2 ? dlStat(e.confirmDL) : null;
+  const sd = e.stage < 4 ? dlStat(e.submitDL)  : null;
+  if ((cd && cd.cls === "dl-over") || (sd && sd.cls === "dl-over")) return "red";
+  const soon = (cd && cd.cls === "dl-soon") || (sd && sd.cls === "dl-soon");
+  if (e.stage === 0) return soon ? "amber" : "gray";
+  return "amber";
+}
+const LVB = { green:"b-gr", amber:"b-am", red:"b-rd", blue:"b-bl", gray:"b-gy" };
+const LVM = { green:"m-gr", amber:"m-am", red:"m-rd", blue:"m-bl", gray:"m-gy" };
+const LV_NAME = { red:"要対応", amber:"進行中", blue:"実施待ち", green:"完了", gray:"未着手" };
+const driftOf = e => (e.workDate && monthOf(e.workDate) !== DB.current) ? monthOf(e.workDate) : "";
+/* 「23:00〜5:00」「23:00〜翌5:00」「23:00〜27:00」は翌日にまたぐ作業 */
+function isOvernight(e) {
+  const m = /(\d{1,2})\s*[:：]\s*\d{2}\s*[~〜～\-–ー]{1,2}\s*(?:翌日?\s*)?(\d{1,2})\s*[:：]\s*\d{2}/.exec(e.workTime || "");
+  if (!m) return /翌/.test(e.workTime || "");
+  return Number(m[2]) >= 24 || Number(m[2]) <= Number(m[1]);
+}
+/* 作業が実際に終わる日（跨日なら翌日） */
+const endDateOf = e => e.workDate ? (isOvernight(e) ? shiftDays(e.workDate, 1) : e.workDate) : "";
+const STATE_LBL = { active:"", postponed:"延期", cancelled:"中止" };
 
-window.toggleCard=function(id){
-  if(openCards.has(id))openCards.delete(id);else openCards.add(id);
-  renderCards();
-};
-window.setFilter=function(f){filter=f;renderFilters();renderCards();};
-window.upd=function(id,field,val){
-  if(!state[id])state[id]={approval:"",status:"",time:"",submitDL:"",confirmDL:"",memo:""};
-  state[id][field]=val;
-  setSyncing(true,"保存中...");
-  scheduleSave();render();
-};
-window.shareURL=shareURL;
-window.importFromURL=importFromURL;
+function curEntries() {
+  const M = curRO();
+  return Object.keys(M).map(Number).map(id => ({ id, p: propById(id), e: M[id] }))
+    .filter(x => x.p)
+    .sort((a, b) => {
+      const ra = a.e.workDate || "9999", rb = b.e.workDate || "9999";
+      if (ra !== rb) return ra < rb ? -1 : 1;
+      return a.p.name.localeCompare(b.p.name, "ja");
+    });
+}
+/* 物件がどの月に登録されているかの逆引き */
+function monthsOf(id) {
+  return Object.keys(DB.months).filter(m => DB.months[m][id]).sort();
+}
 
-load();
+function renderBoard() {
+  const rows = curEntries();
+  const c = { red:0, amber:0, blue:0, green:0, gray:0 };
+  rows.forEach(r => c[levelOf(r.id)]++);
+  const reportWait = rows.filter(r => r.e.stage === 5).length;
+
+  /* メトリクス：タップ後の一覧と件数が必ず一致する */
+  const metrics = [
+    { k:"red",   l:"要対応" },
+    { k:"amber", l:"進行中" },
+    { k:"blue",  l:"実施待ち" },
+    { k:"gray",  l:"未着手" },
+    { k:"green", l:"完了" },
+  ].map(m => `<button class="metric ${LVM[m.k]}${ui.filter===m.k?" on":""}" aria-pressed="${ui.filter===m.k}" onclick="setFilter('${m.k}')">
+      <div class="metric-num" style="color:var(--c-${m.k})">${c[m.k]}</div>
+      <div class="metric-lbl">${esc(m.l)}</div></button>`).join("");
+
+  /* アラート */
+  const alerts = [];
+  /* 連携が止まっていることに気づけるようにする */
+  const stale = syncStale();
+  if (stale) alerts.push({ cls:"urg", icon:"🔌", id:0, nolink:true,
+    msg:`Gmail連携が${stale.days !== null ? `${stale.days}日以上` : "一度も"}成功していません${stale.err ? `（${stale.err}）` : ""}` });
+  /* 同一日に複数物件（作業員・車両の手配衝突） */
+  const byDay = {};
+  rows.forEach(({ p, e }) => {
+    if (e.state === "cancelled" || e.stage >= 5 || !e.workDate) return;
+    (byDay[e.workDate] = byDay[e.workDate] || []).push(p.name);
+  });
+  Object.keys(byDay).sort().forEach(d => {
+    if (byDay[d].length < 2) return;
+    alerts.push({ cls:"wrn", icon:"👷", id:0, nolink:true,
+      msg:`${fmtJP(d)} に ${byDay[d].length}件が重なっています（${byDay[d].slice(0,3).join("・")}${byDay[d].length>3?" ほか":""}）— 作業員・車両の手配をご確認ください` });
+  });
+  rows.forEach(({ id, p, e }) => {
+    if (e.state === "cancelled") return;
+    if (e.stage >= 6) return;
+    if (e.stage === 5) {
+      const base = e.doneAt || e.workDate;
+      const n = base ? diffDays(parseDate(base)) : null;
+      alerts.push({ cls:(n !== null && n < -DB.settings.leadReport) ? "urg" : "wrn", icon:"📄", id,
+        msg:`${p.name}：作業済み・完了報告が未送付${base ? `（作業 ${fmtJP(base)}／${n !== null ? `${Math.abs(n)}日経過` : ""}）` : ""}` });
+      return;
+    }
+    if (e.stage === 4 && !e.workDate) {
+      alerts.push({ cls:"urg", icon:"❓", id,
+        msg:`${p.name}：日程確定になっていますが作業予定日が未入力です` });
+      return;
+    }
+    if (e.state === "postponed") {
+      alerts.push({ cls:"wrn", icon:"⏸", id,
+        msg:`${p.name}：延期中${e.stateNote ? `（${e.stateNote}）` : ""} — 再調整が必要です` });
+      return;
+    }
+    /* 未承認のまま作業日が迫っている（最も危険なのでアラート化） */
+    if (e.stage < 4 && e.workDate) {
+      const n = diffDays(parseDate(e.workDate));
+      if (n >= 0 && n <= 7) {
+        const wait = e.sent.propose ? -diffDays(parseDate(e.sent.propose)) : null;
+        alerts.push({ cls:"urg", icon:"⚠️", id,
+          msg:`${p.name}：未承認のまま作業日まで${n === 0 ? "本日" : `${n}日`}${wait !== null ? `（作業届提出から${wait}日 承認待ち）` : ""}` });
+        return;
+      }
+    }
+    /* 承認待ちが長引いている */
+    if (e.stage === 3 && e.sent.propose) {
+      const wait = -diffDays(parseDate(e.sent.propose));
+      if (wait >= 7) alerts.push({ cls:"wrn", icon:"📮", id,
+        msg:`${p.name}：作業届の提出から${wait}日 承認がありません — 催促をご検討ください` });
+    }
+    const dm = driftOf(e);
+    if (dm) alerts.push({ cls:"info", icon:"📆", id,
+      msg:`${p.name}：作業日 ${fmtJP(e.workDate)}（${monthLabel(dm)}）ですが、この案件は ${monthLabel(DB.current)} のボードにあります — カードから移動できます` });
+    if (e.stage === 4 && e.workDate) {
+      const n = diffDays(parseDate(endDateOf(e)));
+      if (n < 0) alerts.push({ cls:"urg", icon:"❗", id,
+        msg:`${p.name}：${fmtJP(e.workDate)}の作業日を過ぎています（完了記録が未入力）` });
+      else if (n <= 3) alerts.push({ cls:"info", icon:"🧹", id,
+        msg:`${p.name}：作業 ${fmtJP(e.workDate)}${isOvernight(e) ? "〜翌日" : ""}${e.workTime ? ` ${e.workTime}` : ""}（${diffDays(parseDate(e.workDate)) <= 0 ? "本日" : `${diffDays(parseDate(e.workDate))}日後`}）${e.crew ? ` / ${e.crew}` : ""}` });
+      return;
+    }
+    const sd = e.stage < 4 ? dlStat(e.submitDL) : null;
+    const cd = e.stage < 2 ? dlStat(e.confirmDL) : null;
+    if (sd && sd.n <= DB.settings.warnDays) alerts.push({
+      cls: sd.n < 0 ? "urg" : "wrn", icon: sd.n < 0 ? "🚨" : "⏰", id,
+      msg:`${p.name}：作業届 提出期限 ${fmtJP(e.submitDL)}（${sd.label}）` });
+    if (cd && cd.n <= DB.settings.warnDays) alerts.push({
+      cls: cd.n < 0 ? "urg" : "wrn", icon: cd.n < 0 ? "🚨" : "⏰", id,
+      msg:`${p.name}：事前確認 期限 ${fmtJP(e.confirmDL)}（${cd.label}）` });
+  });
+  const ORD = { urg:0, wrn:1, info:2 };
+  alerts.sort((a, b) => ORD[a.cls] - ORD[b.cls]);
+  const shown = alerts.slice(0, 8);
+
+  const filters = [
+    { k:"all",    l:`すべて ${rows.length}` },
+    { k:"todo",   l:"未完了" },
+    { k:"red",    l:`🔴 要対応 ${c.red}` },
+    { k:"amber",  l:`🟡 進行中 ${c.amber}` },
+    { k:"blue",   l:`🔵 実施待ち ${c.blue}` },
+    { k:"report", l:`📄 報告待ち ${reportWait}` },
+    { k:"gray",   l:`⬜ 未着手 ${c.gray}` },
+    { k:"green",  l:`🟢 完了 ${c.green}` },
+  ].map(f => `<button class="fbtn${ui.filter===f.k?" on":""}" aria-pressed="${ui.filter===f.k}"
+       onclick="setFilter('${f.k}')">${esc(f.l)}</button>`).join("");
+
+  const shownRows = rows.filter(passFilter);
+  const banners = [];
+  if (DB.current !== thisMonth()) banners.push(
+    `<div class="banner"><span>表示中は ${esc(monthLabel(DB.current))} です（今月は ${esc(monthLabel(thisMonth()))}）</span>
+      <button onclick="setMonth(thisMonth())">今月へ</button></div>`);
+  const bkDays = DB.lastExportAt ? Math.floor((Date.now() - DB.lastExportAt) / 86400000) : null;
+  if (rows.length && (bkDays === null || bkDays >= 14)) banners.push(
+    `<div class="banner" style="border-color:var(--bd-amber);background:var(--bg-amber);color:var(--c-amber)">
+      <span>${bkDays === null ? "まだバックアップを取っていません" : `バックアップから ${bkDays} 日経過しています`}。
+      データはこのブラウザにしか保存されていません。</span>
+      <button style="background:var(--c-amber)" onclick="exportJSON()">今すぐ保存</button></div>`);
+  /* 初回起動：まだ案件が1件もなく差出人も未設定なら手順を出す */
+  const firstRun = !Object.keys(DB.months).some(m => Object.keys(DB.months[m]).length) && !DB.settings.senderName;
+  const guide = firstRun ? `<div class="sect" style="padding-top:12px"><div class="box">
+      <h2 style="font-size:13.5px;font-weight:600;margin-bottom:7px">はじめに（3ステップ）</h2>
+      <div class="note" style="font-size:12.5px">
+        物件マスタには <b>${DB.props.length}件</b> が登録済みです。月ごとの案件はこれから作ります。<br><br>
+        <b>1.</b> 「＋ 今月の物件を選ぶ」で、${esc(monthLabel(DB.current))}に実施する物件をチェック<br>
+        <b>2.</b> 「物件・連携」タブで<b>担当者名</b>を登録（メール文面の署名に使います）<br>
+        <b>3.</b> 受け取ったメールを「受信取込」に貼り付ける → 工程・日程が自動で入ります<br><br>
+        Gmailと連携すると貼り付けも不要になります（「物件・連携」タブ）。
+      </div>
+      <div class="prow" style="margin-top:9px">
+        <button class="sbtn pri" onclick="togglePicker()">① 今月の物件を選ぶ</button>
+        <button class="sbtn" onclick="setTab('setup')">② 担当者名を登録</button>
+      </div></div></div>` : "";
+  const banner = banners.join("");
+
+  const body = rows.length
+    ? (shownRows.length
+        ? `<div class="cards">${shownRows.map(cardHTML).join("")}</div>`
+        : `<div class="empty">この条件に該当する案件はありません。<br>「すべて」を押すと ${rows.length} 件が表示されます。</div>`)
+    : (firstRun
+        ? `<div class="empty">上の手順①から始めてください。</div>`
+        : `<div class="empty">${esc(monthLabel(DB.current))}の案件はまだありません。<br><br>
+            上の「＋ 今月の物件を選ぶ」から登録するか、<br>
+            「受信取込」タブにメールを貼り付けると自動で作成されます。<br><br>
+            <span style="color:var(--text2)">物件マスタには ${DB.props.length} 件が登録済みです</span></div>`);
+
+  document.getElementById("pane-board").innerHTML = `
+    ${banner}
+    ${undoBarHTML()}
+    ${guide}
+    <div class="metrics">${metrics}</div>
+    <div class="bar" style="padding:10px 16px 4px">
+      <button class="sbtn pri" onclick="togglePicker()">＋ 今月の物件を選ぶ</button>
+      <button class="sbtn sm" onclick="copyPrevMonth()">前月の未完了をコピー</button>
+      <button class="sbtn sm" onclick="shareURL()">🔗 共有URL</button>
+    </div>
+    ${ui.picker ? pickerHTML() : ""}
+    ${shown.length ? `<div class="alerts">${shown.map(a => a.nolink
+      ? `<div class="alert ${a.cls}"><span aria-hidden="true">${a.icon}</span><span>${esc(a.msg)}</span></div>`
+      : `<button class="alert ${a.cls}" onclick="jumpTo(${a.id})"><span aria-hidden="true">${a.icon}</span><span>${esc(a.msg)}</span></button>`).join("")}
+      ${alerts.length > shown.length ? `<div class="note" style="padding:0 2px">他 ${alerts.length - shown.length} 件</div>` : ""}</div>` : ""}
+    ${rows.length ? `<div class="sect" style="padding:10px 16px 0">
+      <input class="finput" type="search" id="boardq" value="${esc(ui.q)}" placeholder="🔍 物件名・コードで絞り込み"
+        oninput="setQuery(this.value)"></div>` : ""}
+    <div class="filters">${filters}</div>
+    ${body}`;
+}
+function passFilter(r) {
+  if (ui.q) {
+    const q = norm(ui.q);
+    const hay = norm(r.p.name + " " + r.p.code + " " + r.p.company + " " + (r.p.aliases || []).join(" "));
+    if (!hay.includes(q)) return false;
+  }
+  if (ui.filter === "all") return true;
+  if (ui.filter === "todo") return r.e.stage < 6;
+  if (ui.filter === "report") return r.e.stage === 5;
+  return levelOf(r.id) === ui.filter;
+}
+
+/* 今月の物件を選ぶパネル（prompt を使わない） */
+function pickListHTML() {
+  const M = curRO(), q = norm(ui.pickQ);
+  const avail = DB.props.filter(p => !M[p.id] && p.active)
+    .filter(p => !q || norm(p.name + p.code + p.company + (p.aliases || []).join("")).includes(q))
+    .sort((a, b) => a.name.localeCompare(b.name, "ja"));
+  if (!avail.length) return `<div class="empty" style="padding:16px">該当する物件がありません</div>`;
+  return avail.map(p => `<label>
+      <input type="checkbox" value="${p.id}"${ui.pickSel.has(p.id) ? " checked" : ""} onchange="togglePick(${p.id},this.checked)">
+      <span>${esc(p.name)}${p.code ? `<span class="pc"> ${esc(p.code)}</span>` : ""}</span>
+    </label>`).join("");
+}
+function pickerHTML() {
+  return `<div class="sect" style="padding-top:4px"><div class="box">
+    <h2 style="font-size:13px;font-weight:600;margin-bottom:6px">${esc(monthLabel(DB.current))}に追加する物件</h2>
+    <input class="finput" type="search" value="${esc(ui.pickQ)}" placeholder="🔍 物件名で絞り込み" oninput="setPickQuery(this.value)">
+    <div class="pick">${pickListHTML()}</div>
+    <div class="prow" style="margin-top:9px">
+      <button class="sbtn pri" onclick="commitPicker()">選んだ ${ui.pickSel.size} 件を追加</button>
+      <button class="sbtn" onclick="togglePicker()">閉じる</button>
+    </div></div></div>`;
+}
+function undoBarHTML() {
+  if (!ui.undo) return "";
+  return `<div class="sect" style="padding:10px 16px 0">
+    <button class="undo" onclick="undoLast()">↩︎ 直前の自動反映を元に戻す（${esc(ui.undo.label)}）</button></div>`;
+}
+
+function cardHTML({ id, p, e }) {
+  const lv = levelOf(id), st = stageOf(e.stage), open = ui.open.has(id);
+  const sd = e.stage < 4 ? dlStat(e.submitDL) : null;
+  const cd = e.stage < 2 ? dlStat(e.confirmDL) : null;
+  const dm = driftOf(e);
+  const tags = [];
+  if (e.workDate) tags.push(`<span class="dl-tag dl-safe">🧹 ${esc(fmtJP(e.workDate))}${e.workTime ? ` ${esc(e.workTime)}` : ""}</span>`);
+  if (isOvernight(e)) tags.push(`<span class="dl-tag dl-safe">🌙 翌日にまたぐ</span>`);
+  if (dm) tags.push(`<span class="warn-tag">📆 作業は${esc(monthLabel(dm))}</span>`);
+  if (e.crew) tags.push(`<span class="dl-tag dl-safe">👷 ${esc(e.crew)}</span>`);
+  if (e.state === "postponed") tags.push(`<span class="warn-tag">⏸ 延期中</span>`);
+  if (cd) tags.push(`<span class="dl-tag ${cd.cls}">確認 ${esc(cd.label)}</span>`);
+  if (sd) tags.push(`<span class="dl-tag ${sd.cls}">作業届 ${esc(sd.label)}</span>`);
+
+  const steps = STAGES.slice(1).map(s =>
+    `<div class="step${e.stage > s.k ? " done" : e.stage === s.k ? " now" : ""}"></div>`).join("");
+  const stOpts = STAGES.map(s => `<option value="${s.k}"${e.stage===s.k?" selected":""}>${esc(s.label)}</option>`).join("");
+  const nextOpts = ["", ...Array.from({length:18},(_,i)=>addMonths(DB.current,i+1))]
+    .map(m => `<option value="${m}"${e.autoNext===m?" selected":""}>${m?monthLabel(m):"未設定"}</option>`).join("");
+  const others = monthsOf(id).filter(m => m !== DB.current);
+
+  return `<div class="card lv-${lv}" id="card-${id}">
+    <button class="card-hdr" onclick="toggleCard(${id})" aria-expanded="${open}">
+      <span style="min-width:0;display:block">
+        <span class="prop-name" style="display:block">${esc(p.name)}</span>
+        ${p.code ? `<span class="prop-sub" style="display:block">${esc(p.code)}</span>` : ""}
+        ${p.company ? `<span class="prop-time" style="display:block">${esc(p.company)}</span>` : ""}
+        ${tags.length ? `<span class="tagrow">${tags.join("")}</span>` : ""}
+      </span>
+      <span class="card-right">
+        <span class="badge ${LVB[lv]}">${e.state === "cancelled" ? "中止" : e.state === "postponed" ? "延期" : esc(st.short)}</span>
+        <span class="chevron${open?" open":""}" aria-hidden="true">▼</span>
+      </span>
+    </button>
+    <div class="card-body${open?" open":""}">
+      <div class="divider"></div>
+      <div class="steps">${steps}</div>
+      <div class="steplbl">${esc(st.label)}</div>
+      ${e.stage < 6 ? `<button class="sbtn pri" onclick="advance(${id})">▶ 次へ：${esc(stageOf(e.stage+1).short)}</button>` : ""}
+      ${dm ? `<div class="note" style="color:var(--c-amber)">作業日は ${esc(monthLabel(dm))} ですが、この案件は ${esc(monthLabel(DB.current))} のボードにあります。
+        <button class="sbtn sm" style="margin-top:6px" onclick="moveEntry(${id},'${dm}')">${esc(monthLabel(dm))}のボードへ移動</button></div>` : ""}
+      <div class="field">
+        <label class="flabel" for="st-${id}">工程</label>
+        <div class="sel-wrap"><select class="finput" id="st-${id}" onchange="setStage(${id},this.value)">${stOpts}</select></div>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label class="flabel" for="wd-${id}">🧹 作業予定日</label>
+          <input class="finput" type="date" id="wd-${id}" value="${esc(e.workDate)}" onchange="updHard(${id},'workDate',this.value)">
+        </div>
+        <div class="field">
+          <label class="flabel" for="wt-${id}">作業時間帯</label>
+          <input class="finput" type="text" id="wt-${id}" value="${esc(e.workTime)}" placeholder="21:00〜9:00"
+            onchange="updSoft(${id},'workTime',this.value)">
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label class="flabel" for="cd-${id}">事前確認 期限</label>
+          <input class="finput" type="date" id="cd-${id}" value="${esc(e.confirmDL)}" onchange="updHard(${id},'confirmDL',this.value)">
+          ${cd ? `<span class="dl-tag ${cd.cls}">${esc(cd.label)}</span>` : ""}
+        </div>
+        <div class="field">
+          <label class="flabel" for="sd-${id}">作業届 提出期限</label>
+          <input class="finput" type="date" id="sd-${id}" value="${esc(e.submitDL)}" onchange="updHard(${id},'submitDL',this.value)">
+          ${sd ? `<span class="dl-tag ${sd.cls}">${esc(sd.label)}</span>` : ""}
+        </div>
+      </div>
+      <div class="field">
+        <label class="flabel" for="nx-${id}">次回予定（${p.cycle}ヶ月周期・完了報告で自動作成）</label>
+        <div class="sel-wrap"><select class="finput" id="nx-${id}" onchange="updHard(${id},'autoNext',this.value)">${nextOpts}</select></div>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label class="flabel" for="cw-${id}">👷 作業員・班</label>
+          <input class="finput" type="text" id="cw-${id}" value="${esc(e.crew)}" placeholder="2名／A班"
+            onchange="updSoft(${id},'crew',this.value)">
+        </div>
+        <div class="field">
+          <label class="flabel" for="stt-${id}">案件の状態</label>
+          <div class="sel-wrap"><select class="finput" id="stt-${id}" onchange="setEntryState(${id},this.value)">
+            <option value="active"${e.state==="active"?" selected":""}>通常</option>
+            <option value="postponed"${e.state==="postponed"?" selected":""}>延期</option>
+            <option value="cancelled"${e.state==="cancelled"?" selected":""}>中止</option>
+          </select></div>
+        </div>
+      </div>
+      ${e.state !== "active" ? `<div class="field">
+        <label class="flabel" for="sn-${id}">${e.state === "postponed" ? "延期" : "中止"}の理由</label>
+        <input class="finput" type="text" id="sn-${id}" value="${esc(e.stateNote)}" placeholder="先方都合／天候など"
+          onchange="updSoft(${id},'stateNote',this.value)"></div>` : ""}
+      <div class="field">
+        <label class="flabel" for="mm-${id}">メモ（この月のみ）</label>
+        <textarea class="finput" id="mm-${id}" placeholder="当日の連絡事項など"
+          onchange="updSoft(${id},'memo',this.value)" style="min-height:70px">${esc(e.memo)}</textarea>
+      </div>
+      <div class="field">
+        <label class="flabel" for="en-${id}">入館方法・鍵・駐車場（物件情報／毎回引き継がれます）</label>
+        <textarea class="finput" id="en-${id}" placeholder="1F防災センターで受付／脚立貸出可／駐車2台まで"
+          onchange="updProp(${id},'entryNote',this.value)" style="min-height:70px">${esc(p.entryNote)}</textarea>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label class="flabel" for="sp-${id}">対象箇所</label>
+          <input class="finput" type="text" id="sp-${id}" value="${esc(p.spots)}" placeholder="本館B1F・4F・8F"
+            onchange="updProp(${id},'spots',this.value)">
+        </div>
+        <div class="field">
+          <label class="flabel" for="su-${id}">消耗品・資材</label>
+          <input class="finput" type="text" id="su-${id}" value="${esc(p.supplies)}" placeholder="アルミパック4枚 など"
+            onchange="updProp(${id},'supplies',this.value)">
+        </div>
+      </div>
+      ${p.contacts.length ? `<div class="note"><b>担当者</b><br>${p.contacts.map(ct =>
+        `${esc(ct.name)} &lt;<a href="mailto:${esc(ct.email)}">${esc(ct.email)}</a>&gt;${ct.tel ? ` / <a href="tel:${esc(ct.tel)}">${esc(ct.tel)}</a>` : ""}`
+        ).join("<br>")}</div>` : `<div class="note" style="color:var(--c-amber)">⚠️ 担当者が未登録です（「物件・連携」タブで登録）</div>`}
+      ${e.sent.precheck || e.sent.propose || e.sent.report || e.approvedAt || e.doneAt ? `<div class="note">
+        <b>履歴</b><br>${[
+          e.sent.precheck && `事前確認 送付 ${e.sent.precheck}`,
+          e.sent.propose  && `日程打診・作業届 送付 ${e.sent.propose}`,
+          e.approvedAt    && `承認 ${e.approvedAt}`,
+          e.doneAt        && `作業完了 ${e.doneAt}`,
+          e.sent.report   && `完了報告 送付 ${e.sent.report}`,
+        ].filter(Boolean).map(esc).join("<br>")}</div>` : ""}
+      ${others.length ? `<div class="note">他の登録月：${others.map(m =>
+        `<button class="sbtn sm" style="display:inline-flex;margin:3px 3px 0 0" onclick="setMonth('${m}')">${esc(monthLabel(m))}</button>`).join("")}</div>` : ""}
+      <div class="prow" style="margin-top:2px">
+        <button class="sbtn sm" onclick="gotoOutbox(${id})">✉️ メール作成</button>
+        <button class="sbtn sm" onclick="removeEntry(${id})">今月から外す</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ══ 受信取込ペイン ═══════════════════════════════════════════ */
+function renderInbox() {
+  const list = ui.pending;
+  /* 内部配列は古い順（処理順と破棄順のため）。表示は新しい順にする */
+  const cards = list.map((r, i) => ({ r, i })).reverse().map(({ r, i }) => {
+    const ch = r.applied ? [] : planChanges(r);
+    const kls = r.applied ? "hi" : (!r.propId ? "no" : r.conf >= 0.85 && ch.length ? "hi" : "lo");
+    const diff = r.applied
+      ? `<div class="pdiff">✅ 反映済み</div>`
+      : (ch.length
+        ? `<div class="pdiff"><div style="font-weight:600;margin-bottom:4px">📅 ${esc(monthLabel(ch[0].month))} のボードに反映されます</div>
+           ${ch.map(c => c.f === "_new" || c.f === "_contact"
+            ? `＋ ${esc(c.to)}`
+            : `${esc(FLD[c.f] || c.f)}：<s>${esc(c.from)}</s> → <b>${esc(c.f === "workDate" ? fmtJP(c.to) : c.f === "autoNext" ? monthLabel(c.to) : c.to)}</b>`).join("<br>")}</div>`
+        : `<div class="pdiff" style="color:var(--text3)">更新点はありません（すでに同じ内容か、判定不能）</div>`);
+    return `<div class="pcard ${kls}">
+      <div class="ptop">
+        <div style="min-width:0">
+          <div class="pname">${r.propId ? esc(r.propName) : "⚠️ 物件が特定できません"}</div>
+          <div class="pmeta">${esc(r.subject)}</div>
+          <div class="pmeta">${r.dir === "in" ? "受信" : "送信"} ${r.from ? "· " + esc(r.from) : ""} ${r.date ? "· " + esc(String(r.date).slice(0,10)) : ""}</div>
+          <div class="pmeta">${r.conf >= 0.85 ? "🟢 ほぼ確実" : r.propId ? "🟡 要確認" : "🔴 判定不能"}
+            ${r.why ? "／判定：" + esc(r.why) : ""}${r.matchBy ? "／照合：" + esc(r.matchBy) : ""}</div>
+        </div>
+      </div>
+      ${diff}
+      ${r.dates.length > 1 ? `<div class="note">📅 日付候補が複数（${r.dates.map(d=>esc(fmtJP(d.iso))).join("・")}）— 確定日は自動設定しません</div>` : ""}
+      ${!r.applied && !r.propId ? `<div class="field">
+        <label class="flabel">物件を指定してください</label>
+        <div class="sel-wrap"><select class="finput" onchange="setPendProp(${i},this.value)">
+          <option value="">— 選択 —</option>${propOptionsHTML(null)}</select></div></div>` : ""}
+      ${!r.applied && r.propId && r.stage < 0 ? `<div class="field">
+        <label class="flabel">工程を指定してください</label>
+        <div class="sel-wrap"><select class="finput" onchange="setPendStage(${i},this.value)">
+          <option value="">— 選択 —</option>${STAGES.map(st => `<option value="${st.k}">${esc(st.label)}</option>`).join("")}</select></div></div>` : ""}
+      ${!r.applied ? `<div class="prow">
+        ${ch.length ? `<button class="sbtn pri" onclick="applyOne(${i})">この内容で反映</button>` : ""}
+        <button class="sbtn" onclick="dismissOne(${i})">無視する</button>
+      </div>` : ""}
+      <details><summary class="note" style="cursor:pointer">本文を確認</summary>
+        <pre class="mail">${esc(r.body.slice(0, 2500))}</pre></details>
+    </div>`;
+  }).join("");
+
+  const hi = list.filter(r => !r.applied && autoOK(r)).length;
+  document.getElementById("pane-inbox").innerHTML = `
+    ${undoBarHTML()}
+    <div class="sect">
+      <h2>メールを貼り付けて自動更新 <span class="hint">複数まとめてOK</span></h2>
+      <div class="box">
+        <textarea class="finput" id="pastebox" placeholder="Gmailの本文をそのまま貼り付けてください（件名・差出人の行も含めるとより正確に判定します）。&#10;複数のメールを続けて貼り付けても、1通ずつ自動で分割します。"></textarea>
+        <div class="bar" style="padding:9px 0 0">
+          <button class="sbtn pri" onclick="analyzePaste()">解析する</button>
+          <button class="sbtn sm" onclick="document.getElementById('pastebox').value='';">クリア</button>
+        </div>
+        <div class="note" style="margin-top:8px">${DB.settings.autoApply
+          ? "⚙️ 現在の設定：判定が<b>ほぼ確実</b>なものは解析と同時に<b>自動で反映</b>されます（「元に戻す」で取り消せます）。「物件・連携」タブでOFFにできます。"
+          : "⚙️ 現在の設定：自動反映は<b>OFF</b>です。内容を確認して「この内容で反映」を押してください。"}</div>
+        <div class="drop" id="dropzone" style="margin-top:9px">📄 .eml / .txt ファイルをここにドロップしても解析します</div>
+      </div>
+    </div>
+    <div class="sect">
+      <h2>解析結果 <span class="hint">${list.length}件${hi?` / 高確度 ${hi}件`:""}</span></h2>
+      ${hi ? `<div class="bar" style="padding:0 0 9px"><button class="sbtn pri" onclick="applyAllHigh()">高確度の ${hi} 件をまとめて反映</button></div>` : ""}
+      ${list.length ? `<div class="cards" style="padding:0 0 40px">${cards}</div>`
+        : `<div class="empty">まだ解析結果がありません。<br>上のボックスにメールを貼り付けて「解析する」を押してください。<br><br>
+             「物件・連携」タブでGmail自動連携を設定すると、<br>貼り付けなしで自動取込されます。</div>`}
+    </div>`;
+}
+const FLD = { stage:"工程", workDate:"作業予定日", workTime:"作業時間帯", autoNext:"次回予定", submitDL:"作業届期限", confirmDL:"事前確認期限" };
+
+/* ══ 送信メールペイン ═════════════════════════════════════════ */
+function sig() {
+  const s = DB.settings;
+  return ["＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿",
+    s.senderCompany || "株式会社コソド",
+    s.senderName || "",
+    s.senderTel ? "MOBILE " + s.senderTel : "",
+    s.senderMail ? "MAIL " + s.senderMail : "",
+    "https://cosodo.co.jp", "https://the-tobacco.jp"].filter(Boolean).join("\n");
+}
+const who = () => DB.settings.senderName ? DB.settings.senderName.replace(/\s+/g, "") : "担当";
+
+function mailTemplate(kind, id) {
+  const p = propById(id), e = entry(DB.current, id, true);
+  const cName = (p.contacts[0]?.name || "ご担当者").replace(/\s*<.*/, "");
+  const head = `${p.company ? p.company + "\n" : ""}${cName}様\n\n`;
+  const dateJP = e.workDate ? fmtJP(e.workDate) : "（作業日未定）";
+  const timeStr = e.workTime ? e.workTime : "";
+  const nx = e.autoNext || addMonths(monthOf(e.workDate) || DB.current, p.cycle);
+  const nxJP = `${nx.split("-")[0]}年${Number(nx.split("-")[1])}月`;
+
+  if (kind === "precheck") return {
+    su: `【株式会社コソド】${p.name}内喫煙室の定期美化清掃につきまして`,
+    body: head +
+`平素より大変お世話になっております。
+株式会社コソドの${who()}と申します。
+
+${p.name}内喫煙室につきまして、
+${monthLabel(DB.current)}頃に定期美化清掃の実施を予定しております。
+
+作業内容といたしましては、
+喫煙室内に付着したヤニ汚れや埃の除去を実施させていただきます。
+
+事前に何点かご確認させていただきたい事項がございますので、
+ご教示いただけますと幸いです。
+
+【確認事項】
+①清掃の実施可能時間について
+
+平日不可・土日祝のみ・営業時間外など、清掃作業実施可能時間帯に
+制限や指定がございましたら、ご教示いただけますと幸いです。
+
+※作業時間は2〜3時間ほどを予定しております。
+
+②入館方法について
+
+当日の入館に必要な申請・受付などございましたら
+併せてご案内いただけますと幸いです。
+
+お忙しいところ恐れ入りますが、ご確認いただけますと幸いです。
+引き続き何卒よろしくお願いいたします。
+` + sig() };
+
+  if (kind === "propose") return {
+    su: `Re: 【株式会社コソド】${p.name}内喫煙室の定期美化清掃につきまして`,
+    body: head +
+`お世話になっております。
+コソドの${who()}です。
+
+${p.name}内喫煙室につきまして、定期美化清掃を実施させていただきたく
+ご連絡いたしました。
+
+誠に勝手ながら、下記日程での実施を希望しておりますが、
+ご都合はいかがでしょうか。
+
+${dateJP}${timeStr ? " " + timeStr : ""}
+
+作業届を添付しますので、ご確認いただけますと幸いです。
+
+引き続き何卒よろしくお願い申し上げます。
+` + sig() };
+
+  if (kind === "remind") return {
+    su: `Re: 【株式会社コソド】${p.name}内喫煙室の定期美化清掃につきまして`,
+    body: head +
+`お世話になっております。
+コソドの${who()}です。
+
+${p.name}内喫煙室の定期美化清掃につきまして、
+先日ご案内いたしました作業届のご確認状況はいかがでしょうか。
+
+作業日として${dateJP}を予定しておりますため、
+恐れ入りますが、ご確認いただけますと幸いです。
+
+引き続き何卒よろしくお願い申し上げます。
+` + sig() };
+
+  return {
+    su: `Re: 【株式会社コソド】${p.name}内喫煙室の定期美化清掃につきまして`,
+    body: head +
+`お世話になっております。
+コソドの${who()}です。
+
+${dateJP}にお約束させていただいておりました、${p.name}内喫煙室の定期美化清掃につきまして
+予定通り作業を実施しましたので、ご報告になります。
+
+作業前後の写真をまとめた「作業完了報告書」を添付いたしますので、
+ご確認いただけますと幸いです。
+
+次回の定期美化清掃は${nxJP}頃の実施を予定しております。
+引き続き何卒よろしくお願い申し上げます。
+` + sig() };
+}
+
+const MAILKIND = [
+  /* show: その工程で意味のあるメールだけを出す（工程が進んだ後の①②は隠す） */
+  { k:"precheck", l:"① 事前確認",        adv:1, needDate:false, show:e => e.stage <= 1 },
+  { k:"propose",  l:"② 日程打診・作業届", adv:3, needDate:true,  show:e => e.stage <= 3 },
+  { k:"remind",   l:"催促（承認待ち）",   adv:0, needDate:false, show:e => e.stage === 3 },
+  { k:"report",   l:"③ 完了報告",        adv:6, needDate:true,  show:e => e.stage >= 4 },
+];
+const kindOf = k => MAILKIND.find(m => m.k === k);
+function nextKind(e) {
+  if (e.stage <= 0) return "precheck";
+  if (e.stage <= 2) return "propose";
+  if (e.stage === 3) return e.sent.propose ? "remind" : "propose";
+  return "report";
+}
+/* 送信できない理由（なければ空文字） */
+function mailBlock(id, kind) {
+  const e = entry(DB.current, id, true), K = kindOf(kind);
+  if (K.needDate && !e.workDate) return "作業予定日が未入力です";
+  return "";
+}
+function renderOutbox() {
+  const rows = curEntries().filter(r => r.e.stage < 6);
+  const noSender = !DB.settings.senderName;
+  document.getElementById("pane-outbox").innerHTML = `
+    <div class="sect">
+      <h2>送信メール <span class="hint">送信したら必ず「送信済みにする」を押してください</span></h2>
+      <div class="box note">
+        ボタンを押すとGmailの作成画面が開きます。<b>自動送信は行いません。</b><br>
+        📎 <b>作業届・完了報告書の添付は手動</b>でお願いします。<br>
+        送信後に「送信済みにする」を押すと工程が自動で進みます。
+        ${noSender ? `<div style="color:var(--c-amber);margin-top:7px">⚠️ 差出人（担当者名）が未設定です。文面が「コソドの担当」になります →
+          <button class="sbtn sm" style="display:inline-flex;margin-top:5px" onclick="setTab('setup')">設定する</button></div>` : ""}
+      </div>
+    </div>
+    ${rows.length ? rows.map(({ id, p, e }) => {
+      const k = nextKind(e);
+      const avail = MAILKIND.filter(m => m.show(e));
+      /* 記録は「まだ記録していない種類」だけ出す（誤操作で日付を上書きしない） */
+      const markable = avail.filter(m => m.adv && !e.sent[m.k]);
+      const t = mailTemplate(k, id);
+      const blk = mailBlock(id, k);
+      return `<div class="sect" style="padding-top:6px" id="out-${id}">
+        <div class="box">
+          <div class="pname">${esc(p.name)}</div>
+          <div class="pmeta">${esc(stageOf(e.stage).label)}${e.workDate ? ` ／ 作業 ${esc(fmtJP(e.workDate))}` : " ／ 作業日 未定"}</div>
+          <div class="pmeta">${p.contacts.length
+            ? `宛先 ${esc(p.contacts.map(c => c.email).join(", "))}`
+            : `<span style="color:var(--c-amber)">⚠️ 宛先未登録（Gmailで宛先を手入力してください）</span>`}</div>
+          ${blk ? `<div class="note" style="color:var(--c-amber);margin-top:7px">⚠️ ${esc(blk)}（このまま送ると文面が「（作業日未定）」になります）</div>` : ""}
+          <div class="prow" style="margin-top:9px">
+            ${avail.map(m => `<button class="sbtn${m.k===k?" pri":""}" onclick="openMail(${id},'${m.k}')">${esc(m.l)}</button>`).join("")}
+          </div>
+          ${markable.length ? `<div class="prow" style="margin-top:6px">
+            ${markable.map(m => `<button class="sbtn" onclick="markSent(${id},'${m.k}')">✅ ${esc(m.l)}を送信済みに</button>`).join("")}
+          </div>` : ""}
+          ${(e.sent.precheck || e.sent.propose || e.sent.report || e.remindAt) ? `<div class="note" style="margin-top:6px">
+            送信記録：${[e.sent.precheck && `①${e.sent.precheck}`, e.sent.propose && `②${e.sent.propose}`,
+              e.remindAt && `催促${e.remindAt}`, e.sent.report && `③${e.sent.report}`].filter(Boolean).map(esc).join(" ／ ")}
+          </div>` : ""}
+          <div class="prow" style="margin-top:6px">
+            <button class="sbtn" onclick="copyMail(${id},'${k}')">本文をコピー</button>
+            <button class="sbtn" onclick="togglePreview(${id})">文面を見る</button>
+          </div>
+          <pre class="mail" id="prev-${id}" style="display:none;margin-top:8px">${esc(t.su)}\n\n${esc(t.body)}</pre>
+        </div></div>`;
+    }).join("") : `<div class="empty">${esc(monthLabel(DB.current))}に送信対象の案件はありません。<br>
+        「ボード」タブで今月の物件を登録してください。</div>`}
+    <div style="height:60px"></div>`;
+}
+function togglePreview(id) {
+  const el = document.getElementById("prev-" + id);
+  if (el) el.style.display = el.style.display === "none" ? "block" : "none";
+}
+
+/* ══ ログ ═════════════════════════════════════════════════════ */
+function renderLog() {
+  const items = DB.log.slice(0, 200);
+  document.getElementById("pane-log").innerHTML = `
+    <div class="sect">
+      <h2>更新ログ <span class="hint">自動更新の履歴（監査用）</span></h2>
+      <div class="box">${items.length ? items.map(l => {
+        const cls = l.src === "mail" ? "mail" : l.src === "auto" ? "auto" : "";
+        const lab = { mail:"メール", auto:"自動", man:"手動", sync:"連携" }[l.src] || l.src;
+        return `<div class="logitem">
+          <span class="logts">${esc(l.ts.slice(5,16).replace("T"," "))}</span>
+          <span class="logsrc ${cls}">${esc(lab)}</span>
+          <span>${esc(l.text)}</span></div>`;
+      }).join("") : `<div class="empty">まだ更新履歴はありません。</div>`}</div>
+      <div class="bar" style="padding:9px 0 40px"><button class="sbtn sm" onclick="clearLog()">ログを消去</button></div>
+    </div>`;
+}
+
+/* ══ 物件・連携ペイン ═════════════════════════════════════════ */
+function renderSetup() {
+  const s = DB.settings, sy = DB.sync;
+
+  document.getElementById("pane-setup").innerHTML = `
+    <div class="sect">
+      <h2>Gmail 自動連携 <span class="hint">貼り付け不要の完全自動更新</span></h2>
+      <div class="box">
+        <div class="field">
+          <label class="flabel" for="syncurl">連携URL（Apps Script の /exec）</label>
+          <input class="finput" type="url" id="syncurl" value="${esc(sy.url)}" placeholder="https://script.google.com/macros/s/.../exec"
+            onchange="setSyncUrl(this.value)">
+        </div>
+        <div class="row2" style="margin-top:9px">
+          <div class="field">
+            <label class="flabel" for="syncauto">自動取込</label>
+            <div class="sel-wrap"><select class="finput" id="syncauto" onchange="setSyncAuto(this.value)">
+              <option value="1"${sy.auto?" selected":""}>ON（開いている間ポーリング）</option>
+              <option value="0"${!sy.auto?" selected":""}>OFF（手動のみ）</option>
+            </select></div>
+          </div>
+          <div class="field">
+            <label class="flabel" for="syncint">間隔（分）</label>
+            <input class="finput" type="number" id="syncint" min="1" max="120" value="${esc(sy.intervalMin)}"
+              onchange="setSyncInterval(this.value)">
+          </div>
+        </div>
+        <div class="row2" style="margin-top:9px">
+          <div class="field">
+            <label class="flabel" for="autoapply">高確度の自動反映</label>
+            <div class="sel-wrap"><select class="finput" id="autoapply" onchange="setOpt('autoApply',this.value==='1')">
+              <option value="1"${s.autoApply?" selected":""}>ON（確度85%以上は自動で反映）</option>
+              <option value="0"${!s.autoApply?" selected":""}>OFF（必ず確認してから反映）</option>
+            </select></div>
+          </div>
+          <div class="field">
+            <label class="flabel">最終取込</label>
+            <input class="finput" type="text" value="${sy.lastOk ? esc(new Date(sy.lastOk).toLocaleString("ja-JP")) : "未実行"}" readonly>
+          </div>
+        </div>
+        <div class="bar" style="padding:9px 0 0">
+          <button class="sbtn pri" onclick="pollNow()">今すぐ取込</button>
+          <button class="sbtn sm" onclick="resetSeen()">取込済み記録をリセット</button>
+        </div>
+      </div>
+      <div class="box">
+        <div class="note"><b>セットアップ手順</b>（初回のみ・PCで約10分）<br>
+        1. 下の「コードをコピー」を押す<br>
+        2. <code>script.google.com</code> で新規プロジェクトを作成し、貼り付けて保存<br>
+        3. コード先頭の <code>SHARED_KEY</code> を、推測できない32文字以上の文字列に<b>必ず書き換える</b><br>
+        4. 「デプロイ」→「新しいデプロイ」→種類「ウェブアプリ」<br>
+        　 実行ユーザー：<b>自分</b>／アクセスできるユーザー：<b>全員</b><br>
+        5. 発行された <code>/exec</code> URL の末尾に <code>?key=（3で決めた文字列）</code> を付けて上の欄に貼り付け<br><br>
+        <b style="color:var(--c-amber)">⚠️ セキュリティ上の注意</b><br>
+        「アクセス：自分のみ」ではブラウザから取得できません（このページはCookieを送らないため）。
+        そのため<b>キーによる保護</b>を使います。<br>
+        <b>この連携URL（キーを含む）を知っている人は、対象メールの件名・本文・宛先を読めます。</b>
+        社外に共有せず、スクリーンショットにも写さないでください。<br><br>
+        スクリプトは Gmail を<b>読み取るだけ</b>で、送信・削除・下書き作成は行いません。<br>
+        ラベル「清掃日程」の付いたメールだけに絞りたい場合は、コード内の
+        <code>LABEL_ONLY</code> を <code>true</code> にしてください（取りこぼしは増えます）。</div>
+        <div class="bar" style="padding:9px 0 0">
+          <button class="sbtn pri" onclick="copyGAS()">📋 コードをコピー</button>
+        </div>
+        <details style="margin-top:8px"><summary class="note" style="cursor:pointer">コードを表示</summary>
+          <pre class="code" id="gasview"></pre></details>
+      </div>
+    </div>
+
+    <div class="sect">
+      <h2>差出人情報 <span class="hint">メール文面の署名に使用</span></h2>
+      <div class="box">
+        <div class="row2">
+          <div class="field"><label class="flabel" for="sn">担当者名</label>
+            <input class="finput" id="sn" type="text" value="${esc(s.senderName)}" placeholder="菅井 大夢" onchange="setOpt('senderName',this.value)"></div>
+          <div class="field"><label class="flabel" for="sc">会社名</label>
+            <input class="finput" id="sc" type="text" value="${esc(s.senderCompany)}" onchange="setOpt('senderCompany',this.value)"></div>
+        </div>
+        <div class="row2" style="margin-top:9px">
+          <div class="field"><label class="flabel" for="stel">携帯</label>
+            <input class="finput" id="stel" type="tel" value="${esc(s.senderTel)}" onchange="setOpt('senderTel',this.value)"></div>
+          <div class="field"><label class="flabel" for="sml">メール</label>
+            <input class="finput" id="sml" type="email" value="${esc(s.senderMail)}" onchange="setOpt('senderMail',this.value)"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sect">
+      <h2>期限の自動計算 <span class="hint">作業予定日から逆算</span></h2>
+      <div class="box">
+        <div class="row3">
+          <div class="field"><label class="flabel" for="lp">事前確認（日前）</label>
+            <input class="finput" id="lp" type="number" min="0" max="180" value="${esc(s.leadPrecheck)}" onchange="setOpt('leadPrecheck',Number(this.value)||45)"></div>
+          <div class="field"><label class="flabel" for="ls">作業届提出（日前）</label>
+            <input class="finput" id="ls" type="number" min="0" max="180" value="${esc(s.leadSubmit)}" onchange="setOpt('leadSubmit',Number(this.value)||30)"></div>
+          <div class="field"><label class="flabel" for="lr">完了報告（作業後 日以内）</label>
+            <input class="finput" id="lr" type="number" min="0" max="60" value="${esc(s.leadReport)}" onchange="setOpt('leadReport',Number(this.value)||3)"></div>
+          <div class="field"><label class="flabel" for="lw">期限警告（日前）</label>
+            <input class="finput" id="lw" type="number" min="0" max="60" value="${esc(s.warnDays)}" onchange="setOpt('warnDays',Number(this.value)||3)"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sect">
+      <h2>データのバックアップ <span class="hint">保存先はこのブラウザ内だけです</span></h2>
+      <div class="box">
+        <div class="bar" style="padding:0">
+          <button class="sbtn sm" onclick="exportJSON()">バックアップを書き出す</button>
+          <button class="sbtn sm" onclick="importJSON()">バックアップから復元</button>
+          <button class="sbtn sm" onclick="shareURL()">共有URL（今月分）</button>
+        </div>
+        <div class="note" style="margin-top:9px">
+          保存件数：物件 ${DB.props.length} 件 ／ 管理月 ${Object.keys(DB.months).length} ヶ月 ／ ログ ${DB.log.length} 件<br>
+          ⚠️ データはこのブラウザにのみ保存されます。<b>キャッシュ削除・端末変更・プライベートモードで失われます。</b>
+          月に一度は「バックアップを書き出す」で保管してください。
+        </div>
+      </div>
+    </div>
+
+    <div class="sect">
+      <h2>物件マスタ <span class="hint">${DB.props.length}件</span></h2>
+      <div class="bar" style="padding:0 0 9px">
+        <button class="sbtn sm" onclick="addProp()">＋ 物件を新規登録</button>
+      </div>
+      <input class="finput" type="search" value="${esc(ui.propQ || "")}" placeholder="🔍 物件名・コード・管理会社で絞り込み"
+        oninput="setPropQuery(this.value)">
+      <div id="proplist">${propListHTML()}</div>
+      <div style="height:60px"></div>
+    </div>`;
+
+  const gv = document.getElementById("gasview");
+  if (gv) gv.textContent = gasSource();
+}
+function setPropQuery(v) {
+  ui.propQ = v;
+  const el = document.getElementById("proplist");
+  if (el) el.innerHTML = propListHTML(); else renderSetup();
+}
+function propListHTML() {
+  const q = norm(ui.propQ || "");
+  const list = DB.props.slice()
+    .filter(p => !q || norm(p.name + p.code + p.company + (p.aliases || []).join("")).includes(q))
+    .sort((a, b) => a.name.localeCompare(b.name, "ja"));
+  if (!list.length) return `<div class="empty">該当する物件がありません</div>`;
+  return list.map(p => {
+    const ms = monthsOf(p.id);
+    return `<div class="box" style="margin-top:7px">
+      <div class="ptop">
+        <div style="min-width:0">
+          <div class="pname">${esc(p.name)}</div>
+          ${p.code ? `<div class="pmeta">${esc(p.code)}</div>` : ""}
+          ${p.company ? `<div class="pmeta">${esc(p.company)}</div>` : ""}
+          <div class="pmeta">周期 ${p.cycle}ヶ月 ／ ${p.contacts.length ? `担当者 ${p.contacts.length}名` : "⚠️ 担当者未登録"}</div>
+          ${p.entryNote ? `<div class="pmeta">入館：${esc(p.entryNote)}</div>` : ""}
+          ${p.spots ? `<div class="pmeta">箇所：${esc(p.spots)}</div>` : ""}
+          ${p.supplies ? `<div class="pmeta">資材：${esc(p.supplies)}</div>` : ""}
+        </div>
+        <button class="sbtn sm" onclick="openPropEditor(${p.id})" style="flex:0 0 auto">${ui.editProp === p.id ? "閉じる" : "編集"}</button>
+      </div>
+      ${p.contacts.length ? `<div class="note" style="margin-top:6px">${p.contacts.map(c =>
+        esc(`${c.name} <${c.email}>${c.tel ? " " + c.tel : ""}`)).join("<br>")}</div>` : ""}
+      <div class="note" style="margin-top:6px">登録月：${ms.length ? ms.map(m =>
+        `<button class="sbtn sm" style="display:inline-flex;margin:3px 3px 0 0" onclick="setMonth('${m}')">${esc(monthLabel(m))}</button>`).join("") : "なし"}</div>
+      ${ui.editProp === p.id ? propEditorHTML(p) : ""}
+    </div>`;
+  }).join("");
+}
+function gasSource() {
+  const el = document.getElementById("gassrc");
+  return el ? el.textContent.trim() : "";
+}
+
+/* ══ 描画エントリポイント ═════════════════════════════════════ */
+function renderAll() {
+  renderTabs(); renderMonthSel();
+  document.getElementById("hdrsub").textContent =
+    `${DB.settings.senderCompany || "株式会社コソド"} ／ ${monthLabel(DB.current)}`;
+  TABS.forEach(t => {
+    const pane = document.getElementById("pane-" + t.k);
+    pane.classList.toggle("on", ui.tab === t.k);
+    pane.setAttribute("role", "tabpanel");
+  });
+  if (ui.tab === "board")  renderBoard();
+  if (ui.tab === "inbox")  renderInbox();
+  if (ui.tab === "outbox") renderOutbox();
+  if (ui.tab === "log")    renderLog();
+  if (ui.tab === "setup")  renderSetup();
+}
+/* テキスト入力を壊さない軽量更新（IME/フォーカス保持） */
+function softRender() {
+  renderTabs();
+  if (ui.tab === "board") {
+    /* バッジと集計だけ差し替える */
+    curEntries().forEach(({ id }) => {
+      const card = document.getElementById("card-" + id);
+      if (!card) return;
+      const lv = levelOf(id), e = entry(DB.current, id, false);
+      card.className = "card lv-" + lv;
+      const b = card.querySelector(".badge");
+      if (b) { b.className = "badge " + LVB[lv]; b.textContent = stageOf(e.stage).short; }
+    });
+  }
+}
+
+/* ══ 操作 ═════════════════════════════════════════════════════ */
+function setTab(k) { ui.tab = k; renderAll(); window.scrollTo({ top:0 }); }
+function setMonth(m) { DB.current = m; ui.open.clear(); save(); renderAll(); }
+function shiftMonth(n) { setMonth(addMonths(DB.current, n)); }
+function setFilter(f) { ui.filter = ui.filter === f ? "all" : f; renderBoard(); }
+function toggleCard(id) { ui.open.has(id) ? ui.open.delete(id) : ui.open.add(id); renderBoard(); }
+function jumpTo(id) {
+  ui.tab = "board"; ui.filter = "all"; ui.open.add(id); renderAll();
+  setTimeout(() => document.getElementById("card-" + id)?.scrollIntoView({ behavior:"smooth", block:"center" }), 60);
+}
+
+/* テキスト系：再描画しない */
+function updSoft(id, f, v) {
+  const e = entry(DB.current, id, true); e[f] = v; touch(e);
+  addLog("edit", `${propById(id).name}：${FLD[f]||f} を手動更新`, "man", id);
+  save(); softRender();
+}
+/* 日付・選択系：全面再描画してよい（コミット時にblurしている） */
+function updHard(id, f, v) {
+  const e = entry(DB.current, id, true); e[f] = v; touch(e);
+  /* 期限の再計算は作業届の提出前だけ。提出後に日程を動かしても
+     済んだ期限が未来に戻ってボードが逆行しないようにする。 */
+  if (f === "workDate") {
+    if (e.stage < 3) { e.confirmDL = ""; e.submitDL = ""; }
+    autoDeadlines(e);
+  }
+  addLog("edit", `${propById(id).name}：${FLD[f]||f} を ${v || "未設定"} に手動更新`, "man", id);
+  rollForward(); save(); renderBoard(); renderMonthSel();
+}
+function setEntryState(id, v) {
+  const e = entry(DB.current, id, true), p = propById(id);
+  e.state = (v === "postponed" || v === "cancelled") ? v : "active";
+  touch(e);
+  addLog("edit", `${p.name}：案件の状態を「${STATE_LBL[e.state] || "通常"}」に変更`, "man", id);
+  save(); renderBoard();
+}
+function setStage(id, v) {
+  const e = entry(DB.current, id, true), n = Number(v) || 0, p = propById(id);
+  e.stage = n; touch(e);
+  if (n >= 4 && !e.approvedAt) e.approvedAt = toISO(todayD());
+  if (n >= 5 && !e.doneAt) e.doneAt = e.workDate || toISO(todayD());
+  if (n >= 5 && !e.autoNext) e.autoNext = addMonths(monthOf(e.workDate) || DB.current, p.cycle);
+  addLog("edit", `${p.name}：工程を「${stageOf(n).label}」に手動変更`, "man", id);
+  rollForward(); save(); renderAll();
+}
+function advance(id) {
+  const e = entry(DB.current, id, true);
+  if (e.stage >= 6) return;
+  setStage(id, e.stage + 1);
+}
+function moveEntry(id, toMonth) {
+  const e = cur()[id]; if (!e) return;
+  const p = propById(id);
+  if (month(toMonth)[id]) return showToast(`${monthLabel(toMonth)}にはすでに同じ物件の案件があります`);
+  month(toMonth)[id] = e;
+  delete cur()[id];
+  addLog("edit", `${p.name}：案件を ${monthLabel(DB.current)} から ${monthLabel(toMonth)} へ移動`, "man", id);
+  save(); renderAll(); showToast(`${monthLabel(toMonth)}へ移動しました`);
+}
+function updProp(id, f, v) {
+  const p = propById(id); if (!p) return;
+  p[f] = v;
+  addLog("edit", `${p.name}：${f === "entryNote" ? "入館方法・注意事項" : f} を更新`, "man", id);
+  save();
+}
+function gotoOutbox(id) {
+  ui.tab = "outbox"; renderAll();
+  setTimeout(() => document.getElementById("out-" + id)?.scrollIntoView({ behavior:"smooth", block:"center" }), 80);
+}
+function snapshot(label) {
+  try {
+    ui.undo = { label, data: JSON.stringify({ months: DB.months, props: DB.props, log: DB.log }) };
+  } catch (e) { ui.undo = null; }
+}
+function undoLast() {
+  if (!ui.undo) return;
+  try {
+    const d = JSON.parse(ui.undo.data);
+    DB.months = d.months; DB.props = d.props; DB.log = d.log;
+    ui.undo = null;
+    reconcile(DB); save(); renderAll();
+    showToast("元に戻しました");
+  } catch (e) { showToast("元に戻せませんでした"); }
+}
+function removeEntry(id) {
+  const p = propById(id);
+  if (!confirm(`${p.name} を ${monthLabel(DB.current)} の管理対象から外します。\n（物件マスタは削除されません）`)) return;
+  /* 自動繰越で再生成されないよう、元の完了案件に印を付ける */
+  Object.keys(DB.months).forEach(m => {
+    const src = DB.months[m][id];
+    if (src && src.stage >= 5 && m < DB.current) src._noRoll = true;
+  });
+  delete cur()[id];
+  addLog("edit", `${p.name}：${monthLabel(DB.current)}の案件を削除`, "man", id);
+  save(); renderAll();
+}
+function togglePicker() {
+  ui.picker = !ui.picker;
+  if (!ui.picker) { ui.pickSel.clear(); ui.pickQ = ""; }
+  renderBoard();
+}
+function setPickQuery(v) {
+  ui.pickQ = v;
+  const box = document.querySelector(".pick");
+  if (box) box.innerHTML = pickListHTML();   // 入力欄は作り直さない
+  else renderBoard();
+}
+function togglePick(id, on) {
+  on ? ui.pickSel.add(id) : ui.pickSel.delete(id);
+  const b = document.querySelector(".pick")?.parentElement?.querySelector(".sbtn.pri");
+  if (b) b.textContent = `選んだ ${ui.pickSel.size} 件を追加`;
+}
+function commitPicker() {
+  if (!ui.pickSel.size) return showToast("追加する物件をチェックしてください");
+  const names = [];
+  ui.pickSel.forEach(id => { entry(DB.current, id, true); names.push(propById(id).name); });
+  addLog("edit", `${monthLabel(DB.current)}に ${names.length}件を追加（${names.slice(0,4).join("・")}${names.length>4?" ほか":""}）`, "man");
+  const n = names.length;
+  ui.pickSel.clear(); ui.pickQ = ""; ui.picker = false;
+  save(); renderAll(); showToast(`${n}件を追加しました`);
+}
+function setQuery(v) {
+  ui.q = v;
+  const rows = curEntries().filter(passFilter);
+  const box = document.querySelector("#pane-board .cards");
+  if (box) box.innerHTML = rows.map(cardHTML).join("");
+  else renderBoard();
+}
+function copyPrevMonth() {
+  const pm = addMonths(DB.current, -1), PM = DB.months[pm];
+  if (!PM || !Object.keys(PM).length) return showToast(`${monthLabel(pm)}に案件がありません`);
+  let n = 0;
+  Object.keys(PM).forEach(id => {
+    if (PM[id].stage >= 6) return;         // 完了済みは引継がない
+    if (cur()[id]) return;
+    const src = PM[id], p = propById(Number(id)); if (!p) return;
+    const e = cur()[id] = newEntry(p);
+    e.stage = src.stage; e.workTime = src.workTime; e.memo = src.memo;
+    n++;
+  });
+  if (!n) return showToast("引継ぐ未完了案件はありません");
+  addLog("edit", `${monthLabel(pm)}から未完了 ${n}件を引継ぎ`, "man");
+  save(); renderAll(); showToast(`${n}件を引継ぎました`);
+}
+
+/* ── 受信取込 ────────────────────────────────────────────────── */
+/* 自動反映の可否。
+   工程5以上（作業完了・完了報告済）は実施と請求の根拠になるため、
+   自社の送信済みメールであるとGmail側で確認できた場合のみ自動反映する。 */
+const AUTO_CONF = 0.85;
+function autoOK(r) {
+  if (!DB.settings.autoApply) return false;
+  if (!r.propId || r.stage < 0) return false;
+  if (r.conf < AUTO_CONF) return false;
+  if (!r.hasHeader) return false;
+  if (r.stage >= 5 && r.verifiedSent !== true) return false;
+  return planChanges(r).length > 0;
+}
+function ingest(text, src) {
+  const mails = splitMails(text);
+  if (!mails.length) { showToast("解析できるテキストがありません"); return 0; }
+  let added = 0, auto = 0;
+  mails.forEach(m => {
+    const r = parseMail(m);
+    if (!r.relevant && !r.propId) return;
+    if (ui.pending.some(x => x.id === r.id)) return;
+    if (DB.sync.seen[r.id]) return;
+    r.applied = false;
+    if (autoOK(r)) {
+      snapshot(`${r.propName} の自動反映`);
+      if (applyResult(r, src || "mail")) { r.applied = true; auto++; }
+    }
+    ui.pending.push(r); added++;
+  });
+  /* 古い方から捨てる（新しいメールを残す） */
+  if (ui.pending.length > 60) ui.pending.splice(0, ui.pending.length - 60);
+  if (!added) showToast("新しい定期清掃メールは見つかりませんでした");
+  else if (auto) showToast(`${added}件を解析／${auto}件を自動反映しました`);
+  else showToast(`${added}件を解析しました。内容を確認して反映してください`);
+  return added;
+}
+function analyzePaste() {
+  const t = document.getElementById("pastebox").value;
+  if (!t.trim()) return showToast("メール本文を貼り付けてください");
+  ingest(t, "mail");
+  renderAll();
+}
+function applyOne(i) {
+  const r = ui.pending[i]; if (!r || r.applied) return;
+  snapshot(`${r.propName || "1件"} の反映`);
+  if (!applyResult(r, "mail")) { ui.undo = null; return showToast("反映する変更点がありません"); }
+  r.applied = true; renderAll(); showToast("反映しました（元に戻せます）");
+}
+function applyAllHigh() {
+  const targets = ui.pending.filter(r => !r.applied && autoOK(r));
+  if (!targets.length) return showToast("反映する変更点がありません");
+  if (!confirm(`次の ${targets.length} 件を反映します。\n\n` +
+      targets.slice(0, 10).map(r => `・${r.propName}：${stageOf(r.stage).short}`).join("\n") +
+      (targets.length > 10 ? `\n・ほか ${targets.length - 10}件` : "") +
+      "\n\nあとで「元に戻す」で取り消せます。")) return;
+  snapshot(`${targets.length}件の一括反映`);
+  let n = 0;
+  targets.forEach(r => { if (applyResult(r, "mail")) { r.applied = true; n++; } });
+  renderAll(); showToast(n ? `${n}件を反映しました（元に戻せます）` : "反映する変更点がありません");
+}
+function dismissOne(i) {
+  const r = ui.pending[i];
+  if (r) DB.sync.seen[r.id] = Date.now();   // 無視したものは再取込しない
+  ui.pending.splice(i, 1);
+  save(); renderAll();
+}
+function propOptionsHTML(sel) {
+  return DB.props.slice().sort((a, b) => a.name.localeCompare(b.name, "ja"))
+    .map(p => `<option value="${p.id}"${sel === p.id ? " selected" : ""}>${esc(p.name)}${p.code ? ` (${esc(p.code)})` : ""}</option>`).join("");
+}
+function setPendProp(i, v) {
+  const r = ui.pending[i], p = propById(Number(v));
+  if (!r || !p) return;
+  r.propId = p.id; r.propName = p.name; r.matchBy = "手動指定";
+  r.conf = Math.max(r.conf, 0.9);
+  /* 件名の呼び方を別名として学習させる */
+  const key = (String(r.subject).match(/【[^】]*】\s*(.{2,20}?)(?:内|の|喫煙|定期|、|，)/) || [])[1];
+  if (key && norm(key) && !norm(p.name).includes(norm(key)) && !(p.aliases || []).some(a => norm(a) === norm(key))) {
+    if (confirm(`「${key.trim()}」を ${p.name} の別名として登録しますか？\n次回以降、自動で照合されます。`)) {
+      p.aliases.push(key.trim());
+      addLog("edit", `${p.name}：別名「${key.trim()}」を学習`, "auto", p.id);
+    }
+  }
+  save(); renderInbox();
+}
+function setPendStage(i, v) {
+  const r = ui.pending[i]; if (!r) return;
+  const n = Number(v);
+  if (!STAGES[n]) return;
+  r.stage = n; r.why = "手動指定";
+  save(); renderInbox();
+}
+
+/* ── 送信 ───────────────────────────────────────────────────── */
+function openMail(id, kind) {
+  const blk = mailBlock(id, kind);
+  if (blk && !confirm(`${blk}。\n\nこのまま作成すると本文に「（作業日未定）」と入ります。\n先にボードで作業予定日を入れることを推奨します。\n\nそれでも作成しますか？`)) return;
+  const p = propById(id), t = mailTemplate(kind, id);
+  const to = p.contacts.map(c => c.email).join(",");
+  const url = "https://mail.google.com/mail/?view=cm&fs=1"
+    + (to ? "&to=" + encodeURIComponent(to) : "")
+    + "&su=" + encodeURIComponent(t.su) + "&body=" + encodeURIComponent(t.body);
+  window.open(url, "_blank", "noopener");
+  showToast("Gmailの作成画面を開きました。送信後「送信済みにする」を押してください");
+}
+function copyMail(id, kind) {
+  const t = mailTemplate(kind, id);
+  const txt = t.su + "\n\n" + t.body;
+  if (navigator.clipboard) navigator.clipboard.writeText(txt).then(
+    () => showToast("本文をコピーしました"), () => prompt("コピーしてください", txt));
+  else prompt("コピーしてください", txt);
+}
+function markSent(id, kind) {
+  const e = entry(DB.current, id, true), p = propById(id), K = kindOf(kind);
+  const today = toISO(todayD()), before = e.stage;
+  if (kind === "precheck") { e.sent.precheck = today; e.stage = Math.max(e.stage, 1); }
+  else if (kind === "propose") { e.sent.propose = today; e.stage = Math.max(e.stage, 3); }
+  else if (kind === "report") {
+    e.sent.report = today; e.stage = Math.max(e.stage, 6);
+    if (!e.doneAt) e.doneAt = e.workDate || today;
+    if (!e.autoNext) e.autoNext = addMonths(monthOf(e.workDate) || DB.current, p.cycle);
+  }
+  else if (kind === "remind") { e.remindAt = today; }
+  autoDeadlines(e);
+  addLog("send", `${p.name}：「${K.l}」の送信を記録${e.stage > before ? ` → 工程「${stageOf(e.stage).label}」に自動更新` : "（工程は変わりません）"}`, "man", id);
+  rollForward(); save(); renderAll();
+  if (e.stage > before) showToast(`工程を「${stageOf(e.stage).short}」に更新しました`);
+  else showToast(`送信を記録しました（工程は「${stageOf(e.stage).short}」のままです）`);
+}
+
+/* ── Gmail 自動連携（Apps Script のJSONをポーリング） ─────────── */
+function setSyncUrl(v) {
+  DB.sync.url = String(v || "").trim();
+  addLog("edit", DB.sync.url ? "Gmail連携URLを設定しました" : "Gmail連携URLを解除しました", "man");
+  save(); startPolling();
+  if (DB.sync.url) pollNow();
+}
+function setSyncAuto(v) { DB.sync.auto = v === "1"; save(); startPolling(); }
+function setSyncInterval(v) { DB.sync.intervalMin = Math.max(1, Math.min(120, Number(v) || 5)); save(); startPolling(); }
+function resetSeen() {
+  if (!confirm(`取込済みの記録を消去します。次回の取込で過去120日分のメールを再解析します。${
+    DB.settings.autoApply ? "\n\n⚠️ 自動反映がONのため、過去120日分が再度自動で反映されます。\n先に自動反映をOFFにすることを推奨します。" : ""}`)) return;
+  DB.sync.seen = {}; save(); showToast("記録をリセットしました");
+}
+function startPolling() {
+  clearInterval(pollTimer);
+  if (!DB.sync.url || !DB.sync.auto) { if (!DB.sync.url) setSync("", "ローカル保存"); return; }
+  /* 連続失敗時は間隔を指数的に延ばす（最大60分） */
+  const back = Math.min(Math.pow(2, Math.min(DB.sync.failCount || 0, 5)), 12);
+  const min = Math.min(60, Math.max(1, DB.sync.intervalMin) * back);
+  pollTimer = setInterval(pollNow, min * 60000);
+}
+async function pollNow() {
+  if (!DB.sync.url) {
+    if (ui.tab !== "setup") { setTab("setup"); showToast("「物件・連携」タブでGmail連携を設定できます"); }
+    return;
+  }
+  setSync("busy", "取込中…");
+  DB.sync.lastPoll = Date.now();
+  const ctl = new AbortController();
+  const to = setTimeout(() => ctl.abort(), 20000);
+  try {
+    const u = DB.sync.url + (DB.sync.url.includes("?") ? "&" : "?") + "days=120&t=" + Date.now();
+    const res = await fetch(u, { method:"GET", redirect:"follow", credentials:"omit", signal: ctl.signal });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const text = await res.text();
+    let data;
+    try { data = JSON.parse(text); }
+    catch (e) { throw new Error("JSONが返っていません（ログイン画面が返っている可能性があります。デプロイのアクセス設定をご確認ください）"); }
+    if (data && data.ok === false) throw new Error("Apps Script側エラー：" + (data.error || "不明"));
+    if (!data || !Array.isArray(data.events)) throw new Error("形式が想定と異なります");
+
+    /* 古い順に処理する。新しい情報を後勝ちで残すため。 */
+    const evs = data.events.slice().sort((a, b) => String(a.date) < String(b.date) ? -1 : 1);
+    let added = 0, auto = 0, snapped = false;
+    evs.forEach(ev => {
+      if (!ev || !ev.id) return;
+      if (DB.sync.seen[ev.id]) return;
+      const r = parseMail({ id:ev.id, subject:ev.subject, from:ev.from, to:ev.to, cc:ev.cc,
+                            date:ev.date, body:ev.body, raw:ev.body });
+      r.verifiedSent = ev.sent === true;      // Gmailの送信済みラベルで確認済み
+      r.attachments = Array.isArray(ev.attachments) ? ev.attachments : [];
+      if (!r.relevant) { DB.sync.seen[ev.id] = Date.now(); return; }
+      if (ui.pending.some(x => x.id === r.id)) return;
+      r.applied = false;
+      /* 自動反映しなかったものは seen に入れない（未確認のまま消えるのを防ぐ） */
+      if (autoOK(r)) {
+        if (!snapped) { snapshot("Gmail連携の自動反映"); snapped = true; }
+        if (applyResult(r, "sync")) { r.applied = true; auto++; }
+      }
+      ui.pending.push(r); added++;
+    });
+    if (ui.pending.length > 60) ui.pending.splice(0, ui.pending.length - 60);
+    DB.sync.lastOk = Date.now();
+    DB.sync.failCount = 0;
+    DB.sync.lastError = "";
+    save(true);
+    setSync("ok", auto ? `自動更新 ${auto}件` : added ? `未確認 ${added}件` : "最新です");
+    if (added) { addLog("sync", `Gmail連携：${added}件を取込（自動反映 ${auto}件）`, "sync"); renderAll(); }
+    else renderTabs();
+  } catch (err) {
+    DB.sync.failCount = (DB.sync.failCount || 0) + 1;
+    DB.sync.lastError = err.name === "AbortError" ? "20秒でタイムアウトしました" : String(err.message || err);
+    save(true);
+    setSync("err", `連携エラー（${DB.sync.failCount}回）`);
+    console.warn("[sync]", err);
+    if (ui.tab === "setup") showToast("取込に失敗：" + DB.sync.lastError);
+    startPolling();     // 連続失敗に応じて間隔を延ばす
+    renderTabs();
+  } finally {
+    clearTimeout(to);
+  }
+}
+/* 連携が何日も止まっていることに気づけるようにする */
+function syncStale() {
+  if (!DB.sync.url) return null;
+  const last = DB.sync.lastOk || 0;
+  if (!last) return { days: null, err: DB.sync.lastError };
+  const h = (Date.now() - last) / 3600000;
+  return h > 24 ? { days: Math.floor(h / 24), err: DB.sync.lastError } : null;
+}
+
+/* ── 共有・入出力 ────────────────────────────────────────────── */
+/* 共有データの物件識別子。ID は端末ごとにずれるためコード/正規化名を使う */
+const propKey = p => (p.code ? "c:" + norm(p.code) : "n:" + norm(p.name));
+function propByKey(k) {
+  return DB.props.find(p => propKey(p) === k) || null;
+}
+function mergeShare(pack) {
+  let merged = 0, skipped = 0, unknown = 0;
+  Object.keys(pack.months).forEach(m => {
+    if (!isMonthKey(m)) return;                       // __proto__ 等を弾く
+    const src = pack.months[m];
+    if (!src || typeof src !== "object") return;
+    Object.keys(src).forEach(k => {
+      const inc = src[k];
+      if (!inc || typeof inc !== "object") return;
+      const p = (typeof inc._key === "string" ? propByKey(inc._key) : null) || propById(Number(k));
+      if (!p) { unknown++; return; }
+      const M = month(m);
+      const mine = M[p.id];
+      if (!mine) { M[p.id] = sanitizeEntry(inc, p); merged++; return; }
+      /* 更新時刻が新しい側を採用（フィールド単位） */
+      if ((inc.updatedAt || "") <= (mine.updatedAt || "")) { skipped++; return; }
+      M[p.id] = Object.assign(mine, sanitizeEntry(inc, p));
+      merged++;
+    });
+  });
+  return { merged, skipped, unknown };
+}
+function sanitizeEntry(o, p) {
+  const e = newEntry(p);
+  ["workDate","workTime","submitDL","confirmDL","memo","approvedAt","doneAt","autoNext",
+   "remindAt","crew","updatedAt","state","stateNote"].forEach(k => {
+    if (typeof o[k] === "string") e[k] = o[k].slice(0, 300);
+  });
+  e.stage = Math.max(0, Math.min(6, Number(o.stage) || 0));
+  if (o.sent && typeof o.sent === "object") {
+    ["precheck","propose","report"].forEach(k => {
+      if (typeof o.sent[k] === "string") e.sent[k] = o.sent[k].slice(0, 20);
+    });
+  }
+  return e;
+}
+/* 共有URL：deflate 圧縮でチャットに貼れる長さに収める */
+async function packShare() {
+  const M = curRO(), out = {};
+  Object.keys(M).forEach(id => {
+    const p = propById(Number(id)); if (!p) return;
+    out[id] = Object.assign({}, M[id], { _key: propKey(p) });
+  });
+  const json = JSON.stringify({ v: 1, current: DB.current, months: { [DB.current]: out } });
+  if (typeof CompressionStream === "function") {
+    try {
+      const cs = new CompressionStream("deflate-raw");
+      const w = cs.writable.getWriter();
+      w.write(new TextEncoder().encode(json)); w.close();
+      const buf = new Uint8Array(await new Response(cs.readable).arrayBuffer());
+      let bin = ""; buf.forEach(b => bin += String.fromCharCode(b));
+      return "z" + btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+    } catch (e) { /* 非対応環境は無圧縮へ */ }
+  }
+  return "p" + b64e(json);
+}
+async function unpackShare(hash) {
+  const h = String(hash || "");
+  if (h[0] === "z") {
+    const bin = atob(h.slice(1).replace(/-/g, "+").replace(/_/g, "/"));
+    const buf = Uint8Array.from(bin, c => c.charCodeAt(0));
+    const ds = new DecompressionStream("deflate-raw");
+    const w = ds.writable.getWriter();
+    w.write(buf); w.close();
+    return JSON.parse(new TextDecoder().decode(await new Response(ds.readable).arrayBuffer()));
+  }
+  return JSON.parse(b64d(h[0] === "p" ? h.slice(1) : h));   // 旧形式も読める
+}
+async function shareURL() {
+  try {
+    const url = location.href.split("#")[0] + "#" + await packShare();
+    if (url.length > 8000) showToast(`URLが長すぎます（${url.length}文字）。件数を絞るかバックアップの書き出しをご利用ください`);
+    const done = () => showToast("共有URLをコピーしました（今月分のみ）");
+    if (navigator.share) {
+      navigator.share({ title:`定期清掃 ${monthLabel(DB.current)}`, url })
+        .then(done).catch(() => { if (navigator.clipboard) navigator.clipboard.writeText(url).then(done, () => prompt("コピーしてください", url)); else prompt("コピーしてください", url); });
+    } else if (navigator.clipboard) {
+      navigator.clipboard.writeText(url).then(done, () => prompt("コピーしてください", url));
+    } else prompt("コピーしてください", url);
+  } catch (e) { showToast("共有URLの生成に失敗しました：" + e.message); }
+}
+function exportJSON() {
+  const blob = new Blob([JSON.stringify(DB, null, 2)], { type:"application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `定期清掃_${toISO(todayD())}.json`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  DB.lastExportAt = Date.now(); save(true);
+  showToast("バックアップを書き出しました" + (DB.sync.url ? "（Gmail連携URLも含まれます。取扱にご注意ください）" : ""));
+}
+function importJSON() {
+  const inp = document.createElement("input");
+  inp.type = "file"; inp.accept = ".json,application/json";
+  inp.onchange = () => {
+    const f = inp.files[0]; if (!f) return;
+    const fr = new FileReader();
+    fr.onload = () => {
+      try {
+        const d = JSON.parse(fr.result);
+        if (!d || !d.props || !d.months) throw new Error("形式が違います");
+        const newUrl = (d.sync && d.sync.url) || "";
+        const urlWarn = (newUrl && newUrl !== DB.sync.url)
+          ? `\n\n⚠️ Gmail連携URLが次の値に変更されます：\n${newUrl}\n信頼できるバックアップか必ず確認してください。` : "";
+        if (!confirm(`現在のデータを、読み込んだ内容で完全に置き換えます。\n物件 ${(d.props||[]).length}件 ／ 管理月 ${Object.keys(d.months||{}).length}ヶ月${urlWarn}\n\n実行しますか？（現在のデータは自動退避します）`)) return;
+        try { localStorage.setItem(LS_KEY + "_preimport_" + Date.now(), JSON.stringify(DB)); } catch (e) {}
+        DB = reconcile(d); DB.schema = SCHEMA;
+        addLog("import", "JSONファイルからデータを読み込みました", "man");
+        rollForward(); save(); renderAll(); showToast("読み込みました");
+      } catch (e) { showToast("読み込みに失敗しました：" + e.message); }
+    };
+    fr.readAsText(f);
+  };
+  inp.click();
+}
+function copyGAS() {
+  const code = gasSource();
+  if (navigator.clipboard) navigator.clipboard.writeText(code).then(
+    () => showToast("Apps Scriptのコードをコピーしました"), () => showToast("コピーできませんでした（コードを表示して手動でコピーしてください）"));
+  else showToast("「コードを表示」から手動でコピーしてください");
+}
+function clearLog() {
+  if (!confirm("更新ログを消去します。管理データ（案件・工程）は消えません。")) return;
+  DB.log = []; save(); renderAll();
+}
+function setOpt(k, v) {
+  DB.settings[k] = v;
+  if (k === "leadPrecheck" || k === "leadSubmit") {
+    Object.keys(DB.months).forEach(m => Object.keys(DB.months[m]).forEach(id => {
+      const e = DB.months[m][id];
+      if (e.workDate) { e.confirmDL = ""; e.submitDL = ""; autoDeadlines(e); }
+    }));
+  }
+  save(); if (k.startsWith("lead") || k === "warnDays") renderAll(); else softRender();
+}
+
+/* ── 物件マスタ編集 ──────────────────────────────────────────── */
+function addProp() {
+  const n = prompt("物件名を入力してください");
+  if (!n || !n.trim()) return;
+  const p = newProp({ n:n.trim(), c:"", co:"", t:"" }, nextPropId());
+  DB.props.push(p);
+  addLog("edit", `物件「${p.name}」を新規登録`, "man", p.id);
+  save(); renderAll(); showToast("登録しました。続けて編集で担当者を追加できます");
+}
+function openPropEditor(id) {
+  ui.editProp = (ui.editProp === id) ? null : id;
+  renderSetup();
+  if (ui.editProp) setTimeout(() => document.getElementById("pe-" + id)?.scrollIntoView({ behavior:"smooth", block:"center" }), 60);
+}
+function propEditorHTML(p) {
+  const lines = p.contacts.map(c => `${c.name} <${c.email}>${c.tel ? " " + c.tel : ""}`).join("\n");
+  return `<div id="pe-${p.id}" style="margin-top:10px;border-top:1px solid var(--border);padding-top:10px">
+    <div class="field"><label class="flabel" for="pn-${p.id}">物件名</label>
+      <input class="finput" id="pn-${p.id}" type="text" value="${esc(p.name)}"></div>
+    <div class="row2" style="margin-top:8px">
+      <div class="field"><label class="flabel" for="pc-${p.id}">THE TOBACCO コード</label>
+        <input class="finput" id="pc-${p.id}" type="text" value="${esc(p.code)}" placeholder="任意"></div>
+      <div class="field"><label class="flabel" for="py-${p.id}">周期（月）</label>
+        <input class="finput" id="py-${p.id}" type="number" min="1" max="36" value="${esc(p.cycle)}"></div>
+    </div>
+    <div class="field" style="margin-top:8px"><label class="flabel" for="pm-${p.id}">管理会社</label>
+      <input class="finput" id="pm-${p.id}" type="text" value="${esc(p.company)}"></div>
+    <div class="field" style="margin-top:8px"><label class="flabel" for="pa-${p.id}">別名（カンマ区切り／メール照合に使用）</label>
+      <input class="finput" id="pa-${p.id}" type="text" value="${esc((p.aliases || []).join(", "))}"></div>
+    <div class="field" style="margin-top:8px"><label class="flabel" for="pe2-${p.id}">入館方法・鍵・駐車場</label>
+      <textarea class="finput" id="pe2-${p.id}" placeholder="1F防災センターで受付／脚立貸出可／駐車2台まで" style="min-height:70px">${esc(p.entryNote)}</textarea></div>
+    <div class="row2" style="margin-top:8px">
+      <div class="field"><label class="flabel" for="ps-${p.id}">対象箇所</label>
+        <input class="finput" id="ps-${p.id}" type="text" value="${esc(p.spots)}" placeholder="本館B1F・4F・8F"></div>
+      <div class="field"><label class="flabel" for="pu-${p.id}">消耗品・資材</label>
+        <input class="finput" id="pu-${p.id}" type="text" value="${esc(p.supplies)}" placeholder="アルミパック4枚 など"></div>
+    </div>
+    <div class="field" style="margin-top:8px"><label class="flabel" for="pt-${p.id}">担当者（1行に1名）</label>
+      <textarea class="finput" id="pt-${p.id}" placeholder="山田 太郎 &lt;yamada@example.co.jp&gt; 03-1234-5678">${esc(lines)}</textarea>
+      <div class="note">「名前 &lt;メールアドレス&gt; 電話番号」の形式で、1行に1名ずつ。電話番号は省略できます。</div></div>
+    <div class="prow" style="margin-top:9px">
+      <button class="sbtn pri" onclick="savePropEditor(${p.id})">保存</button>
+      <button class="sbtn" onclick="openPropEditor(${p.id})">取消</button>
+    </div></div>`;
+}
+function savePropEditor(id) {
+  const p = propById(id); if (!p) return;
+  const g = k => { const el = document.getElementById(k + "-" + id); return el ? el.value : ""; };
+  const name = g("pn").trim();
+  if (!name) return showToast("物件名を入力してください");
+  p.name = name;
+  p.code = g("pc").trim();
+  p.company = g("pm").trim();
+  p.entryNote = g("pe2").trim();
+  p.spots = g("ps").trim();
+  p.supplies = g("pu").trim();
+  p.cycle = Math.max(1, Math.min(36, Number(g("py")) || 6));
+  p.aliases = g("pa").split(/[,、]/).map(x => x.trim()).filter(Boolean);
+  /* 1行1名。textarea なので改行が保持され、複数名が1件に潰れない */
+  p.contacts = g("pt").split(/\r?\n/).map(line => {
+    const t = line.trim(); if (!t) return null;
+    const em = /[\w.+-]+@[\w.-]+\.\w+/.exec(t);
+    if (!em) return null;
+    const before = t.slice(0, em.index).replace(/[<＜（(]\s*$/, "").trim();
+    const after  = t.slice(em.index + em[0].length).replace(/^\s*[>＞）)]/, "").trim();
+    return { name: before || em[0].split("@")[0], email: em[0], tel: after };
+  }).filter(Boolean);
+  ui.editProp = null;
+  addLog("edit", `物件「${p.name}」の情報を更新（担当者 ${p.contacts.length}名）`, "man", p.id);
+  save(); renderAll(); showToast("保存しました");
+}
+
+/* ── ドラッグ&ドロップ ───────────────────────────────────────── */
+function wireDrop() {
+  const stop = e => { e.preventDefault(); e.stopPropagation(); };
+  ["dragenter","dragover","dragleave","drop"].forEach(ev => {
+    document.addEventListener(ev, e => {
+      const dz = document.getElementById("dropzone");
+      if (!dz) return;
+      stop(e);
+      dz.classList.toggle("hot", ev === "dragenter" || ev === "dragover");
+      if (ev === "drop") {
+        const files = [...(e.dataTransfer?.files || [])];
+        if (!files.length) return;
+        let pending = files.length, buf = [];
+        files.forEach(f => {
+          const fr = new FileReader();
+          fr.onload = () => { buf.push(String(fr.result)); if (!--pending) { ingest(buf.join("\n\n件名: \n"), "mail"); renderAll(); } };
+          fr.onerror = () => { if (!--pending) { if (buf.length) ingest(buf.join("\n"), "mail"); renderAll(); } };
+          fr.readAsText(f, "UTF-8");
+        });
+      }
+    }, false);
+  });
+}
+
+/* ── 初期化 ─────────────────────────────────────────────────── */
+window.addEventListener("DOMContentLoaded", () => {
+  load().catch(e => {
+    console.error(e);
+    document.getElementById("pane-board").innerHTML =
+      `<div class="empty">起動に失敗しました：${esc(e.message)}<br>ページを再読み込みしてください。データは保護されています。</div>`;
+    setSync("err", "起動エラー");
+    /* 壊れた状態で操作させない */
+    document.querySelectorAll(".hdr button, .tabs button").forEach(b => b.disabled = true);
+  });
+  wireDrop();
+  const flush = () => {
+    clearTimeout(saveTimer);
+    if (!DB) return;
+    try {
+      DB.pending = ui.pending.slice(0, 30).map(r => Object.assign({}, r, { body: String(r.body || "").slice(0, 1800) }));
+      localStorage.setItem(LS_KEY, JSON.stringify(DB));
+    } catch (e) {}
+  };
+  window.addEventListener("pagehide", flush);
+  document.addEventListener("visibilitychange", () => { if (document.hidden) flush(); });
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden && DB?.sync?.url && DB.sync.auto &&
+        Date.now() - (DB.sync.lastPoll || 0) > DB.sync.intervalMin * 60000) pollNow();
+  });
+});
 </script>
+
+<script type="text/plain" id="gassrc">
+/**
+ * 定期美化清掃 管理ボード — Gmail 連携（読み取り専用）
+ * ============================================================
+ * このスクリプトは Gmail を「読む」だけです。
+ * メールの送信・削除・変更・下書き作成は一切行いません。
+ *
+ * ■ セットアップ
+ *  1. 下の SHARED_KEY を、推測できない長い文字列に必ず書き換えてください。
+ *     （例：ブラウザのアドレス欄で about:blank を開き、適当な英数字を32文字以上）
+ *  2. script.google.com で新規プロジェクトを作成し、このコードを貼り付けて保存
+ *  3. 「デプロイ」→「新しいデプロイ」→ 種類「ウェブアプリ」
+ *       実行ユーザー          ：自分
+ *       アクセスできるユーザー：全員
+ *     ※「自分のみ」ではブラウザから取得できません（Cookieを送らないため）。
+ *       代わりに下の SHARED_KEY で保護します。
+ *  4. 発行された URL の末尾に ?key=（1で決めた文字列）を付けて、
+ *     管理ボードの「連携URL」に貼り付けてください。
+ *     例： https://script.google.com/macros/s/XXXX/exec?key=あなたのキー
+ *
+ * ■ 重要な注意
+ *  ・この URL とキーを知っている人は、対象メールの件名・本文・宛先を読めます。
+ *    URL は社外に共有しないでください。スクリーンショットにも写さないように。
+ *  ・キーを変えたいときは SHARED_KEY を書き換えて再デプロイし、
+ *    管理ボード側の連携URLも更新してください。
+ */
+
+// ★ここを必ず書き換えてください（32文字以上を推奨）
+var SHARED_KEY = 'CHANGE-ME-32文字以上のランダムな文字列に置き換えてください';
+
+// 監視対象。Gmailのラベル「清掃日程」＋定期清掃キーワード
+var LABEL = '清掃日程';
+var KEYWORDS = '(定期美化清掃 OR 定期清掃 OR 作業届 OR 作業完了報告書 OR 喫煙室 OR 喫煙所)';
+// ラベルの付いたメールだけを対象にしたい場合は true にしてください
+// （漏洩範囲は狭くなりますが、ラベルの付け忘れは取りこぼします）
+var LABEL_ONLY = false;
+
+var MAX_THREADS = 120;
+var BODY_LIMIT = 4000;
+
+function doGet(e) {
+  var key = (e && e.parameter && e.parameter.key) || '';
+  if (!SHARED_KEY || SHARED_KEY.indexOf('CHANGE-ME') === 0) {
+    return json({ ok: false, error: 'SHARED_KEY が初期値のままです。スクリプトを書き換えてください。' });
+  }
+  if (key !== SHARED_KEY) {
+    return json({ ok: false, error: 'key が一致しません。連携URLの ?key= を確認してください。' });
+  }
+  var days = 120;
+  if (e && e.parameter && e.parameter.days) {
+    days = Math.max(1, Math.min(400, parseInt(e.parameter.days, 10) || 120));
+  }
+  try {
+    return json({ ok: true, generatedAt: new Date().toISOString(), days: days, events: collectEvents(days) });
+  } catch (err) {
+    return json({ ok: false, error: String(err) });
+  }
+}
+
+function json(obj) {
+  return ContentService.createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function collectEvents(days) {
+  var base = LABEL_ONLY ? 'label:"' + LABEL + '"' : '(label:"' + LABEL + '" OR ' + KEYWORDS + ')';
+  var query = base + ' newer_than:' + days + 'd -in:spam -in:trash';
+
+  // 自分が実際に送信したメールのIDを集める。
+  // 表示名だけを偽装した「自社を装う受信メール」と区別するために使う。
+  var sentIds = {};
+  try {
+    var sentThreads = GmailApp.search(base + ' newer_than:' + days + 'd in:sent', 0, MAX_THREADS);
+    for (var a = 0; a < sentThreads.length; a++) {
+      var sm = sentThreads[a].getMessages();
+      for (var b = 0; b < sm.length; b++) {
+        var labels = ('' + sm[b].getFrom());
+        sentIds[sm[b].getId()] = true;
+      }
+    }
+  } catch (e2) { /* 取得できなくても続行（sent:false になるだけ） */ }
+
+  var threads = GmailApp.search(query, 0, MAX_THREADS);
+  var events = [];
+  for (var i = 0; i < threads.length; i++) {
+    var msgs = threads[i].getMessages();
+    for (var j = 0; j < msgs.length; j++) {
+      var m = msgs[j];
+      events.push({
+        id: m.getId(),
+        threadId: threads[i].getId(),
+        date: m.getDate().toISOString(),
+        from: m.getFrom(),
+        to: m.getTo(),
+        cc: m.getCc(),
+        subject: m.getSubject(),
+        sent: sentIds[m.getId()] === true,
+        body: stripQuoted(m.getPlainBody()).slice(0, BODY_LIMIT),
+        attachments: m.getAttachments({ includeInlineImages: false })
+                      .map(function (x) { return x.getName(); })
+      });
+    }
+  }
+  events.sort(function (x, y) { return x.date < y.date ? 1 : -1; });
+  return events;
+}
+
+// 引用履歴を落とす（過去の日程を誤検出させないため）
+function stripQuoted(body) {
+  var lines = String(body || '').replace(/\r/g, '').split('\n');
+  var out = [];
+  for (var i = 0; i < lines.length; i++) {
+    var l = lines[i];
+    if (/^\s*>/.test(l)) break;
+    if (/^\s*\d{4}\s*年\s*\d{1,2}\s*月\s*\d{1,2}\s*日\s*(?:[（(][日月火水木金土][)）])?\s*\d{1,2}\s*[:：]\s*\d{2}/.test(l)) break;
+    if (/^\s*\**\s*(From|差出人|Sent|送信日時)\s*\**\s*[:：]/.test(l)) break;
+    if (/^-{5,}\s*(Original Message|元のメッセージ)/.test(l)) break;
+    out.push(l);
+  }
+  return out.join('\n');
+}
+
+// 動作確認用：エディタでこの関数を実行すると件数がログに出ます
+function testCollect() {
+  var ev = collectEvents(60);
+  Logger.log('events: ' + ev.length);
+  if (ev.length) Logger.log(JSON.stringify(ev[0], null, 2));
+}
+</script>
+
 </body>
 </html>
